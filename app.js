@@ -4,7 +4,8 @@
  */
 
 var express = require('express')
-  , routes = require('./routes');
+  , routes = require('./routes')
+  // , RedisStore = require('connect-redis')(express);
 
 var app = module.exports = express.createServer();
 
@@ -12,11 +13,14 @@ var app = module.exports = express.createServer();
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
+  app.set('view engine', 'ejs');
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
+  
+  app.use(express.cookieParser());
+  // app.use(express.session({ secret: "read_this_froma_file_listed_in_gitignore", store: new RedisStore }));
 });
 
 app.configure('development', function(){
