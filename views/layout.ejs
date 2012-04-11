@@ -12,7 +12,7 @@
        More info: h5bp.com/i/378 -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title><%= title %></title>
+  <title>"title"</title>
 
   <!-- Mobile viewport optimized: h5bp.com/viewport -->
   <meta name="viewport" content="width=device-width">
@@ -21,13 +21,15 @@
 
   <link rel="stylesheet" href="css/h5bp.css">
 	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/counter.css" />
 
   <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
 
   <!-- All JavaScript at the bottom, except this Modernizr build.
        Modernizr enables HTML5 elements & feature detects for optimal performance.
        Create your own custom Modernizr build: www.modernizr.com/download/ -->
-  <script src="js/libs/modernizr-2.5.3.min.js"></script>
+       <script src="js/libs/modernizr-2.5.3.min.js"></script>
+     	
 </head>
 <body>
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.
@@ -37,10 +39,9 @@
   <header>
 
   </header>
-  <div role="main">
-		<%- body %>
-  </div>
-
+    <div role="main">
+		  <%- body %>
+    </div>
   <footer>
 
   </footer>
@@ -49,11 +50,22 @@
   <!-- JavaScript at the bottom for fast page loading -->
 
   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="js/libs/jquery-1.7.2.min.js"><\/script>')</script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js"></script>
+  
+	<script type="text/javascript" src="js/flipcounter.js"></script>
+	
+	<script>
+	$(function(){
+	  	// Initialize a new counter
+		var myCounter = new flipCounter('flip-counter', {value:10000, inc:123, pace:600, auto:true});
+	});
+  
+  </script>
+  
 
   <!-- scripts concatenated and minified via build script -->
-  <script src="js/h5bp-plugins.js"></script>
+  <!--<script src="js/h5bp-plugins.js"></script> -->
   <!-- end scripts -->
 
   <!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID.

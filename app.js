@@ -5,8 +5,7 @@
 
 var express = require('express')
   , redis = require("redis").createClient()
-// , RedisStore = require('connect-redis')(express)
-    
+  //, RedisStore = require('connect-redis')(express)
   , routes = require('./routes')
   ;
 
@@ -28,22 +27,31 @@ var app = module.exports = express.createServer();
 // Configuration
 
 app.configure(function(){
+  
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   
   app.use(express.bodyParser());
-//  app.use(express.methodOverride());
-  
-  app.use(express.cookieParser());
-  // app.use(express.session({ secret: "read_this_froma_file_listed_in_gitignore", store: new RedisStore }));
-  
-  app.use(app.router);
+  app.use(express.methodOverride());
   app.use(express.static(__dirname + '/public'));
+  app.use(express.cookieParser());
+  //app.use(express.session({ secret: "read_this_froma_file_listed_in_gitignore", store: new RedisStore }));
+  //app.use(express.csrf());
+  app.use(app.router);
+  
+  app.use(function(err, req, res, next){
+    res.render('500.html.ejs', {
+        status: err.status || 500
+      , error: err
+    });
+  });
+  
+  app.use(function(req, res){
+     res.render('404.html.ejs');
+  });
   
   app.session = redisWrapper;
-  
-  app.helpers({
-  });
+  //app.helpers({});
 });
 
 app.configure('development', function(){
