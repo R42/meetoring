@@ -7,7 +7,7 @@ var express = require('express')
   , redis = require("redis").createClient()
   //, RedisStore = require('connect-redis')(express)
   , routes = require('./routes')
-  ;
+
 
 var redisWrapper = {
   get: function(key, callback) {
