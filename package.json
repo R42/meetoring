@@ -4,7 +4,8 @@
   , "private": true
   , "dependencies": {
       "express": "2.5.8"
-    , "ejs": ">= 0.0.1"
-    , "connect-redis" : ">= 0.0.1"
+    , "ejs": ">= 0.7.1"
+    , "connect-redis" : ">= 1.3.0"
+    , "redis" : ">= 0.7.1"
   }
 }

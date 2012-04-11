@@ -1,8 +1,11 @@
 
 /*
- * GET home page.
+ * GET home page or /:hash
  */
-
-exports.index = function(req, res){
-  res.render('index', { title: 'Meetoring' })
-};
+module.exports.index = exports.index = function(req, res){
+  req.app.session.get(req.params.hash, function(meeting){
+  if (!meeting)
+    res.render('index', { title: 'Meetoring' })
+  else
+    res.render('meeting', { meeting: meeting, title: 'Meeting' });
+};  
