@@ -1,1 +1,39 @@
-<h1>Meeting <%= meeting.name %>!</h1>
+<h3>Meeting <strong><%= meeting.name %></strong></h3>
+<div id="total">€<span id="value">3456.23</span></span></div>
+
+<div  id="form" class="form-inline">
+</div>
+
+
+<script type="text/template" id="attendee_form_template">
+    <span><input type="text" autocomplete="off" placeholder="Price per Hour..." class="focused input input-small" id="create-meeting-rate"></span>
+    <span><a id="join_attendee" class="btn btn-inverse"> Join </a> </span>
+</script>
+
+
+<script>
+  _.templateSettings = {
+    interpolate : /\{\{(.+?)\}\}/g
+  };
+
+  var render = _.template($("#attendee_form_template").html());
+  $("#form").html(render({}));
+  $('#join_attendee').click(function(event){
+    var rate =  $("#create-meeting-rate").attr('value');
+    
+    $.ajax({
+      type: 'POST',
+      url: '/join/<%= meeting.id %>',
+      data: {rate: rate},
+      success: success,
+			dataType: 'json'
+    });
+    
+    function success(data){
+      $("#form").empty();
+      $("<a />").attr('class', 'btn btn-inverse').html('Leave').appendTo("#form");
+
+			alert(JSON.stringify(data));
+    }
+  });
+</script>

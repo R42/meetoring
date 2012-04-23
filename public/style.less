@@ -1,0 +1,67 @@
+@import "less/bootstrap/bootstrap.less";
+@import "less/bootstrap/responsive.less";
+
+// @import "global-mobile.less";
+
+/* ===== Primary Styles ========================================================
+   Author:
+   ========================================================================== */
+
+
+@import "less/media-queries.less";
+@import "less/helpers.less";
+
+
+.rotate (@radius: 90deg) {
+  -webkit-transform: rotate(@radius);
+  -moz-transform: rotate(@radius);
+  -ms-transform: rotate(@radius);
+  -o-transform: rotate(@radius);
+  transform: rotate(@radius);
+}
+
+#main {
+  text-align: center;
+}
+
+#logo-m {
+  display: inline-block;
+  .rotate;
+  font-size: 2em;
+  vertical-align: middle;
+  margin-right: 10px;
+  margin-top: -12px;
+  margin-left: 15px;
+}
+
+#create-meeting-name {
+  border-radius: 8px;
+}
+
+#start-monitoring-form {
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+}
+
+@media only screen and (min-width: 768px) {
+  #total {
+    font-size: 80px;
+    line-height: 80px; 
+  }
+}
+
+@media only screen and (min-width: 481px) {
+  #rest-of-the-title { display: inline; }
+  #smaller-title { display: none; }
+  
+  #total {
+    font-size: 80px;
+    line-height: 80px; 
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  #rest-of-the-title { display: none; }
+  #smaller-title { display: block; }
+}
