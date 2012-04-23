@@ -37,13 +37,15 @@ function createMeeting(req, res, next){
 }; 
 
 function joinMeeting(req, res, next) {
+  var rate = req.body.rate;
+  rate = parseFloat(rate.replace(",", "."));
+  
   Meeting.find(req.params.hash, callback);
   
   function callback(meeting) {
     if (!meeting)
       res.send("Can't find that meeting", 404);
     else {
-      var rate = req.body.rate;
       meeting.addAttendee(rate);
       res.json(meeting.clientModel());
     }

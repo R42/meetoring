@@ -24,16 +24,17 @@ Meeting.prototype = {
     var bool = storage.set(this._id, this, callback);
   },
   
-  addAttendee: function(rate) {
-    this._attendees.push(rate);
+  addAttendee: function(rate_per_hour) {
+    var rate_per_minute = rate_per_hour / 60 ;
+    this._attendees.push(rate_per_minute);
     
     if (!this._timeStamp) {
-      this._rate = rate;
+      this._rate = rate_per_minute;
       this._timeStamp = new Date();
       return;
     }
 
-    this.updateRate(rate);
+    this.updateRate(rate_per_minute);
   },
   
   removeAttendee: function(rate) {
