@@ -2,10 +2,10 @@ require('console-trace')
 console.traceAlways = true;
 
 var express = require('express')
-  , routes = require('./routes')
+  , meeting = require('./routes/meeting')
   , socketio = require('socket.io')
   , lessMiddleware = require('less-middleware')
-  , ejsLayoutSupport = require('./ejsLayoutSupport')
+  , ejsLayoutSupport = require('./lib/ejsLayoutSupport')
 
 var app = module.exports = express.createServer();
 var io = socketio.listen(app);
@@ -21,7 +21,7 @@ app.configure(function(){
          force: true,
          once: false,
          debug: true,
-         compress: false,
+         compress: false
      }));
   app.use(express.static(__dirname + '/public'));
   app.use(express.cookieParser());
@@ -42,24 +42,24 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  app.session = require('./app_session');
+  app.session = require('./lib/memoryStore');
 });
 
 app.configure('staging production', function(){
   app.use(express.errorHandler());
-  app.session = require('./redis_app_session');
+  app.session = require('./lib/redisStore');
   
   app.use(lessMiddleware({
          src: __dirname + '/public',
          force: false,
          once: true,
          debug: false,
-         compress: true,
+         compress: true
      }));
 });
 
-app.get('/:hash?', routes.index);
-app.post('/', routes.createMeeting);
+app.get('/:hash?', meeting.handlers.index);
+app.post('/'     , meeting.handlers.createMeeting);
 app.post('/join/:hash'     , meeting.handlers.joinMeeting);
 app.post('/leave/:hash'     , meeting.handlers.leaveMeeting);
 

@@ -1,5 +1,5 @@
-var crc32 = require('../crc32');
-var storage = require('../app_session');
+var crc32 = require('../lib/crc32');
+var storage = require('../lib/memoryStore');
 var _ = require('underscore');
 
 var Meeting = function (name){    
