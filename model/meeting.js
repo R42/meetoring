@@ -8,7 +8,7 @@ var Meeting = function (name){
     this._attendees = [];
     this._total = 0;
     this._rate = 0; // per minute -- 60000 millis
-    this._timeStamp;
+    this._timeStamp = new Date();
 };
 
 Meeting.find = function(hash,callback){
@@ -24,45 +24,44 @@ Meeting.prototype = {
     var bool = storage.set(this._id, this, callback);
   },
   
-  addAttendee: function(rate_per_hour) {
-    var rate_per_minute = rate_per_hour / 60 ;
-    this._attendees.push(rate_per_minute);
+  addAttendee: function(ratePerHour) {
+    var ratePerMinute = ratePerHour / 60 ;
+    this._attendees.push(ratePerMinute);
     
-    if (!this._timeStamp) {
-      this._rate = rate_per_minute;
-      this._timeStamp = new Date();
-      return;
-    }
-
-    this.updateRate(rate_per_minute);
+    this.updateRate(ratePerMinute);
   },
   
-  removeAttendee: function(rate) {
-    var index = _.indexOf(this._attendees, rate);
+  removeAttendee: function(ratePerHour) {
+    var ratePerMinute = ratePerHour / 60 ;
+    var index = _.indexOf(this._attendees, ratePerMinute);
     
     if (index == -1) return;
     
     this._attendees.splice(index, 1);
     
-    this.updateRate(-rate);
+    this.updateRate(-ratePerMinute);
   },
   
-  updateRate: function(rate) {
+  updateTotal: function() {
     var newTimestamp = new Date();
     var timespanMillis = newTimestamp - this._timeStamp;
     this._timeStamp = newTimestamp
     
     this._total += this._rate * timespanMillis / 60000;
+  },
+  
+  updateRate: function(rate) {
+    this.updateTotal();
     this._rate += rate;
   },
   
   getRate: function() { return this._rate; },
-  getTotal: function() { return this._total; },
+  getTotal: function() { this.updateTotal(); return this._total; },
   
   clientModel: function() {
     return {
-      rate: this.getRate(),
-      total: this.getTotal(),
+      rate: this.getRate().toFixed(2),
+      total: this.getTotal().toFixed(2),
       id: this._id,
       name: this._name
     };

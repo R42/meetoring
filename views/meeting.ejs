@@ -1,5 +1,5 @@
 <h3>Meeting <strong><%= meeting.name %></strong></h3>
-<div id="total">€<span id="value">3456.23</span></span></div>
+<div id="total">€<span id="value"><%= meeting.total %></span></span></div>
 
 <div  id="form" class="form-inline">
 </div>
@@ -12,28 +12,56 @@
 
 
 <script>
-  _.templateSettings = {
-    interpolate : /\{\{(.+?)\}\}/g
-  };
+	
+	$(function() {
+		
+		var meeting = <%- JSON.stringify(meeting) %>;
+		
+		// start the counter
+		var total = 0;
+		var rate = 0;
+		var setCounter = function(meeting) {
+			total = parseFloat(meeting.total);
+			rate = parseFloat(meeting.rate) / 60;
+		};
+		setCounter(meeting);
+		var intervalID = setInterval(function() {
+			$('#value').text((total += rate));
+		}, 1000);
+		
+		// render the template for joining the meeting
+		_.templateSettings = {
+	    interpolate : /\{\{(.+?)\}\}/g
+	  };
+	  var render = _.template($("#attendee_form_template").html());
+	  $("#form").html(render({}));
 
-  var render = _.template($("#attendee_form_template").html());
-  $("#form").html(render({}));
-  $('#join_attendee').click(function(event){
-    var rate =  $("#create-meeting-rate").attr('value');
-    
-    $.ajax({
-      type: 'POST',
-      url: '/join/<%= meeting.id %>',
-      data: {rate: rate},
-      success: success,
-			dataType: 'json'
-    });
-    
-    function success(data){
-      $("#form").empty();
-      $("<a />").attr('class', 'btn btn-inverse').html('Leave').appendTo("#form");
+		// setup the join button
+	  $('#join_attendee').click(function(event){
+	    var rate =  $("#create-meeting-rate").attr('value');
 
-			alert(JSON.stringify(data));
-    }
-  });
+	    var success = function(meeting){
+	      $("#form").empty();
+	      $("<a />").attr('class', 'btn btn-inverse').html('Leave').appendTo("#form");
+
+				setCounter(meeting);
+				console.log('Joined! ' + meeting.total + ' ' + meeting.rate);
+	    };
+    
+	    $.ajax({
+	      type: 'POST',
+	      url: '/join/<%= meeting.id %>',
+	      data: {rate: rate},
+	      success: success,
+				dataType: 'json'
+	    });
+	  });
+	
+		// connect through socket
+	/*	var socket = io.connect();
+	  socket.on('update', function (data) {
+	  });
+	*/
+
+	});
 </script>
