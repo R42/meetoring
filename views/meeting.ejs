@@ -1,5 +1,5 @@
 <h3>Meeting <strong><%= meeting.name %></strong></h3>
-<div id="total">€<span id="value">3456.23</span></span></div>
+<div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></span></div>
 
 <div  id="form" class="form-inline">
 </div>
@@ -13,28 +13,89 @@
 
 <script>
 
-  _.templateSettings = {
-    interpolate : /\{\{(.+?)\}\}/g
-  };
+ function Counter(_delay){
+   this.total = 0;
+   this.rate = 0;
+   this.delay =  ( _delay && _delay * 1030 ) || 1030;
+   this.interval;
+   this.state="stopped";
+   
+   
+   this.init = function(meeting){
+     this.total = parseFloat(meeting.total);
+     this.rate = parseFloat(meeting.ratePerSecond);
+   };
+   
+   this.start = function(){
+     if( this.state=== "stopped"){
+       this.state = "running";
+       function bind(){
+         var that = this;
+         return function(){
+           that.increment();
+           that.render.call(that);
+         }
+       };
+       
+       this.interval = setInterval(bind.call(this),this.delay);
+     }
+   };
+   
+   this.increment = function(){
+     this.total += this.rate;
+     
+   };
+   
+   this.stop = function(){
+    if(this.state === "running"){
+      this.state = "stopped";
+      this.total = 0;
+      this.rate = 0;
+      clearInterval(this.interval)
+    }
+   };
+   
+   this.restart = function(meeting){
+     this.stop();
+     this.init(meeting);
+     this.start();
+   };
+   
+   this.render = function(){
+     $('#meetingTotalValue').text(this.total.toFixed(2));
+   }
+   
+ }
 
-  var render = _.template($("#attendee_form_template").html());
-  $("#form").html(render({}));
-  $('#join_attendee').click(function(event){
-    var rate =  $("#create-meeting-rate").attr('value');
+  var counter = new Counter(1);
+  var meeting = <%- JSON.stringify(meeting) %>;
+  counter.init(meeting);
+ 
+  _.templateSettings = {
+     interpolate : /\{\{(.+?)\}\}/g
+   };
+   var render = _.template($("#attendee_form_template").html());
+   $("#form").html(render({}));
+
+   $('#join_attendee').click(function(event){ 
+     var rate =  $("#create-meeting-rate").attr('value');
+     var success = function(meeting){
+        $("#form").empty();
+        $("<a />").attr('class', 'btn btn-inverse').html('Leave').appendTo("#form");
+        counter.restart(meeting);
+      };
     
-    $.ajax({
+   $.ajax({
       type: 'POST',
       url: '/join/<%= meeting.id %>',
       data: {rate: rate},
       success: success,
-			dataType: 'json'
-    });
-    
-    function success(data){
-      $("#form").empty();
-      $("<a />").attr('class', 'btn btn-inverse').html('Leave').appendTo("#form");
-
-			alert(JSON.stringify(data));
-    }
-  });
+      dataType: 'json'
+   });
+          
+          
+   });
+   
+   counter.start();
+  
 </script>
