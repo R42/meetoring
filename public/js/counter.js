@@ -40,9 +40,6 @@
         return;
         
       this.state = "stopped";
-      this.total = 0;
-      this.rate = 0;
-      
       clearInterval(this.interval);
     },
   
@@ -57,5 +54,6 @@
     }
   };
 
-  Meetoring.Counter = Class;
-})();
+  window.Meetoring.Counter = Class;
+  
+})(window);
