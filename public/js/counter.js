@@ -1,11 +1,18 @@
-!function(){
+(function(){
+  
+  var STATE ={ 
+    RUNNING: "running",
+    STOPPED: "stopped"
+  };
     
-  var Class = function (_delay){
+  var Class = function (container, period){
     this.total = 0;
     this.rate = 0;
-    this.delay =  ( _delay && _delay * 1030 ) || 1030;
+    this.period = period || 1000;
+    this.delay =  period + 30;
     this.interval;
-    this.state = "stopped";
+    this.state = STATE.STOPPED;
+    this.container = container;
   };
   
   Class.prototype = {
@@ -15,14 +22,14 @@
       this.rate = parseFloat(meeting.rate);
     },
   
-    this.start: function(){
-      if( this.state == "running")
+    start: function(){
+      if( this.state === STATE.RUNNING )
         return;
         
-      this.state = "running";
+      this.state = STATE.RUNNING;
 
       var self = this;        
-      var ticker: function() {
+      var ticker = function() {
         self.increment();
         self.render();
       };
@@ -30,31 +37,29 @@
       this.interval = setInterval(ticker, this.delay);
     },
 
-    this.increment: function(){
-      this.total += this.rate;
+    increment: function(){
+      this.total += this.rate * this.period / 1000;
     },
 
-    this.stop: function(){
-      if(this.state === "stopped")
+    stop: function(){
+      if(this.state === STATE.STOPPED)
         return;
         
-      this.state = "stopped";
-      this.total = 0;
-      this.rate = 0;
-      
+      this.state = STATE.STOPPED;
       clearInterval(this.interval);
     },
   
-    this.restart: function(meeting){
+    restart: function(meeting){
       this.stop();
       this.init(meeting);
       this.start();
     },
   
-    this.render: function(){
-      $('#meetingTotalValue').text(this.total.toFixed(2));
+    render: function(){
+      $(this.container).text(this.total.toFixed(2));
     }
   };
+
+  window.Meetoring.Counter = Class;
   
-  Meetoring.Counter = Class;
-};
+})(window);

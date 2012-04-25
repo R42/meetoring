@@ -2,14 +2,14 @@ require('console-trace')
 console.traceAlways = true;
 
 var express = require('express')
-  , meeting = require('./routes/meeting')
-  , socketio = require('socket.io')
+  , http = require('http')
+  , app = express()
+  , server = http.createServer(app)
+  , routes = require('./routes')
   , lessMiddleware = require('less-middleware')
   , ejsLayoutSupport = require('./lib/ejsLayoutSupport')
-
-var app = module.exports = express.createServer();
-var io = socketio.listen(app);
-
+  , io = require('socket.io').listen(server);
+  
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
@@ -20,7 +20,7 @@ app.configure(function(){
          src: __dirname + '/public',
          force: true,
          once: false,
-         debug: true,
+         debug: false,
          compress: false
      }));
   app.use(express.static(__dirname + '/public'));
@@ -58,17 +58,59 @@ app.configure('staging production', function(){
      }));
 });
 
-app.get('/:hash?', meeting.handlers.index);
-app.post('/'     , meeting.handlers.createMeeting);
-app.post('/join/:hash'     , meeting.handlers.joinMeeting);
-app.post('/leave/:hash'     , meeting.handlers.leaveMeeting);
+app.get('/:hash?'           , routes.index);
+app.post('/'                , routes.createMeeting);
 
+var Meeting = require('./model/meeting');
 io.sockets.on('connection', function (socket) {
-    socket.on('attendee:hello', function(data){
-      // 
+  
+  socket.on('syncRequest', function(meetingId, ack) {
+    Meeting.find(meetingId, function(meeting) {
+      if (!meeting) ack(null);
+      else ack(meeting.clientModel());
     });
+  });
+  
+  socket.on('join', function(data, ack) {
+    var rate = data.rate;
+    var meetingId = data.meetingId;
+    
+    rate = parseFloat(rate.toString().replace(",", "."));
+
+    Meeting.find(meetingId, function(meeting) {
+      if (!meeting)
+        res.send("Can't find that meeting", 404);
+      else {
+        meeting.addAttendee(rate);
+        var clientModel = meeting.clientModel();
+
+        ack(clientModel);
+        socket.volatile.broadcast.emit('sync', clientModel);
+      }
+    });
+  });
+  
+  socket.on('leave', function(data, ack) {
+    var rate = data.rate;
+    var meetingId = data.meetingId;
+    
+    rate = parseFloat(rate.toString().replace(",", "."));
+
+    Meeting.find(meetingId, function(meeting) {
+      if (!meeting)
+        res.send("Can't find that meeting", 404);
+      else {
+        meeting.removeAttendee(rate);
+        var clientModel = meeting.clientModel();
+
+        ack(clientModel);
+        socket.volatile.broadcast.emit('sync', clientModel);
+      }
+    });
+  });
 });
 
 var port = app.settings.env == 'development' ? 3333 : 80;
-app.listen(port);
+server.listen(port);
 console.log("Express server listening on port %d in %s mode", port, app.settings.env);
+

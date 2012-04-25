@@ -2,8 +2,16 @@ var crc32 = require('../lib/crc32');
 var storage = require('../lib/memoryStore');
 var _ = require('underscore');
 
+
+//Private Function
+function meetingUUID(name){
+  var id = +new Date + "#" + name; 
+  var UUID = crc32(id);
+  return UUID;
+}
+
 var Meeting = function (name){    
-    this._id = crc32(name);
+    this._id = meetingUUID(name);
     this._name = name;
     this._attendees = [];
     this._total = 0;
@@ -25,7 +33,7 @@ Meeting.prototype = {
   },
   
   addAttendee: function(ratePerHour) {
-    var rate = ratePerHour / 60 ;
+    var rate = ratePerHour / 3600 ;
     this._attendees.push(rate);
     
     this.updateRate(rate);
@@ -50,7 +58,7 @@ Meeting.prototype = {
     var timespanMillis = newTimestamp - this._timeStamp;
     this._timeStamp = newTimestamp
     
-    this._total += this.getRate() * timespanMillis / 1000;
+    this._total += this.getRate() * ( timespanMillis / 1000 );
   },
   
   updateRate: function(rate) {
