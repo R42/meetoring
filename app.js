@@ -2,13 +2,13 @@ require('console-trace')
 console.traceAlways = true;
 
 var express = require('express')
-  , meeting = require('./routes/meeting')
-  , socketio = require('socket.io')
+  , routes = require('./routes')
   , lessMiddleware = require('less-middleware')
   , ejsLayoutSupport = require('./lib/ejsLayoutSupport')
-
-var app = module.exports = express.createServer();
-var io = socketio.listen(app);
+  , app = module.exports = express.createServer()
+  , io = require('socket.io').listen(app);
+  
+console.log(io);
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -58,10 +58,10 @@ app.configure('staging production', function(){
      }));
 });
 
-app.get('/:hash?', meeting.handlers.index);
-app.post('/'     , meeting.handlers.createMeeting);
-app.post('/join/:hash'     , meeting.handlers.joinMeeting);
-app.post('/leave/:hash'     , meeting.handlers.leaveMeeting);
+app.get('/:hash?'           , routes.index);
+app.post('/'                , routes.createMeeting);
+app.post('/join/:hash'      , routes.joinMeeting);
+app.post('/leave/:hash'     , routes.leaveMeeting);
 
 io.sockets.on('connection', function (socket) {
     socket.on('attendee:hello', function(data){

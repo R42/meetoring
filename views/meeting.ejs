@@ -1,46 +1,53 @@
 <h3>Meeting <strong><%= meeting.name %></strong></h3>
 <div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></span></div>
 
-<div  id="form" class="form-inline">
+<div id="form-join" class="form-inline">
+	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." class="focused input input-small" id="attendee-rate"></span>
+  <span><a id="attendee-join" class="btn btn-inverse">Join</a></span>
 </div>
+<div>
 
+<div id="form-leave" class="form-inline hidden">
+	<span><a id="attendee-leave" class="btn btn-inverse">Leave</a></span>
+</div>
+	
 <script src="/js/counter.js"></script>
 
-<script type="text/template" id="attendee_form_template">
-    <span><input type="text" autocomplete="off" placeholder="Price per Hour..." class="focused input input-small" id="create-meeting-rate"></span>
-    <span><a id="join_attendee" class="btn btn-inverse"> Join </a> </span>
-</script>
-
-
 <script>
-
-  var counter = new Meetoring.Counter(1, '#meetingTotalValue');
+$(function() {
+	
+	var counter = new Meetoring.Counter(1, '#meetingTotalValue');
   var meeting = <%- JSON.stringify(meeting) %>;
   counter.init(meeting);
+	counter.start();
  
-  _.templateSettings = {
-     interpolate : /\{\{(.+?)\}\}/g
-   };
-   var render = _.template($("#attendee_form_template").html());
-   $("#form").html(render({}));
+	var onError = function(error) {
+		alert(error);
+	};
 
-   $('#join_attendee').click(function(event){ 
-     var rate =  $("#create-meeting-rate").attr('value');
-     var success = function(meeting){
-        $("#form").empty();
-        $("<a />").attr('class', 'btn btn-inverse').html('Leave').appendTo("#form");
-        counter.restart(meeting);
-      };
-    
-	   $.ajax({
-	      type: 'POST',
-	      url: '/join/<%= meeting.id %>',
-	      data: {rate: rate},
-	      success: success,
-	      dataType: 'json'
-	   });  
-   });
-   
-   counter.start();
-  
+	$('#attendee-join').click(function(event){ 
+		var rate =  $("#attendee-rate").attr('value');
+		Meetoring.joinMeeting(meeting.id, rate, function(error, data) {
+			if (error)
+				onError(error);
+			
+			meeting = data;
+			$("#form-join").hide();
+			$("#form-leave").removeClass('hidden').show();
+			counter.restart(meeting);			
+		});
+	});
+	
+	$('#attendee-leave').click(function(event){ 
+		Meetoring.leaveMeeting(function(error, data) {
+			if (error)
+				onError(error);
+			
+			meeting = data;
+			$("#form-leave").hide();
+			$("#form-join").show();
+			counter.restart(meeting);		
+		});
+	});
+});
 </script>

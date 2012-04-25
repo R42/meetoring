@@ -1,9 +1,11 @@
 var Meeting = require('../model/meeting');
 
+var routes = {};
+
 /*
  * GET home page or /:hash
  */
-function index(req, res) {
+routes.index = function(req, res) {
   Meeting.find(req.params.hash, callback);
    
   function callback(meeting){
@@ -19,9 +21,8 @@ function index(req, res) {
  * POST home page
  */
  
-function createMeeting(req, res, next){
-  debugger
-  
+routes.createMeeting = function(req, res, next){
+
   var meeting_name = req.body.meeting_name;
   
   var meeting = new Meeting(meeting_name);
@@ -36,26 +37,22 @@ function createMeeting(req, res, next){
    }//CALLBACK
 }; 
 
-function joinMeeting(req, res, next) {
+routes.joinMeeting = function(req, res, next) {
   var rate = req.body.rate;
   rate = parseFloat(rate.replace(",", "."));
   
-  Meeting.find(req.params.hash, callback);
-  
-  function callback(meeting) {
+  Meeting.find(req.params.hash, function(meeting) {
     if (!meeting)
       res.send("Can't find that meeting", 404);
     else {
       meeting.addAttendee(rate);
       res.json(meeting.clientModel());
     }
-  }
+  });
 }
 
-function leaveMeeting(req, res, next) {
-  Meeting.find(req.params.hash, callback);
-  
-  function callback(meeting) {
+routes.leaveMeeting = function(req, res, next) {
+  Meeting.find(req.params.hash, function (meeting) {
     if (!meeting)
       res.send("Can't find that meeting", 404);
     else {
@@ -63,8 +60,8 @@ function leaveMeeting(req, res, next) {
       meeting.removeAttendee(rate);
       res.json(meeting.clientModel());
     }
-  }
+  });
 }
 
-module.exports.handlers = { index: index, createMeeting: createMeeting, joinMeeting: joinMeeting }
+module.exports = routes;
 
