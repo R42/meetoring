@@ -17,10 +17,6 @@ var Meeting = function (name){
     this._total = 0;
     this._rate = 0; // per second -- 3 600 000 millis
     this._timeStamp = new Date();
-    
-    
-    
-    
 };
 
 Meeting.find = function(hash,callback){

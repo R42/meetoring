@@ -20,34 +20,39 @@ $(function() {
   var meeting = <%- JSON.stringify(meeting) %>;
   counter.init(meeting);
 	counter.start();
- 
-	var onError = function(error) {
-		alert(error);
+	
+	var sync = function(data) {
+		meeting = data;
+		counter.restart(meeting);
 	};
+	
+	var socket = io.connect();
+	socket.on('sync', sync);
 
+	var rate = 0;
+	var action = function(event, fn) {
+		socket.emit(event, { rate: rate, meetingId: meeting.id }, function(data) {
+			sync(data);
+			if (fn) fn();
+		});
+	};
+	
 	$('#attendee-join').click(function(event){ 
-		var rate =  $("#attendee-rate").attr('value');
-		Meetoring.joinMeeting(meeting.id, rate, function(error, data) {
-			if (error)
-				onError(error);
-			
-			meeting = data;
+		rate =  $("#attendee-rate").attr('value');
+
+		action('join', function(data) {
 			$("#form-join").hide();
 			$("#form-leave").removeClass('hidden').show();
-			counter.restart(meeting);			
 		});
 	});
 	
 	$('#attendee-leave').click(function(event){ 
-		Meetoring.leaveMeeting(function(error, data) {
-			if (error)
-				onError(error);
-			
-			meeting = data;
+		action('leave', function(data) {
 			$("#form-leave").hide();
 			$("#form-join").show();
-			counter.restart(meeting);		
 		});
 	});
+	
+	setInterval(function() { socket.emit('syncRequest', meeting.id, sync); }, 5 * 1000);
 });
 </script>
