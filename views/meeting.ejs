@@ -3,7 +3,7 @@
 
 <div id="form-join" class="form-inline">
 	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." class="focused input input-small" id="attendee-rate"></span>
-  <span><a id="attendee-join" class="btn btn-inverse">Join</a></span>
+	<span><a id="attendee-join" class="btn btn-inverse">Join</a></span>
 </div>
 <div>
 
@@ -14,10 +14,11 @@
 <script src="/js/counter.js"></script>
 
 <script>
+
 $(function() {
-	
-	var counter = new Meetoring.Counter('#meetingTotalValue', 200);
-  var meeting = <%- JSON.stringify(meeting) %>;
+	var meeting = <%- JSON.stringify(meeting) %>;
+  var counter = new Meetoring.Counter('#meetingTotalValue', 200);
+  var clientId = meeting.clientId;
   counter.init(meeting);
 	counter.start();
  
@@ -27,7 +28,7 @@ $(function() {
 
 	$('#attendee-join').click(function(event){ 
 		var rate =  $("#attendee-rate").attr('value');
-		Meetoring.joinMeeting(meeting.id, rate, function(error, data) {
+		Meetoring.joinMeeting(meeting.id, rate, clientId, function(error, data) {
 			if (error)
 				onError(error);
 			
@@ -49,5 +50,17 @@ $(function() {
 			counter.restart(meeting);		
 		});
 	});
+	
+	var socket = io.connect();
+
+  socket.on('name please?', function (data) {
+    socket.emit('my identification is', { meeting: { id: meeting.id , clientId: clientId } } );
+  });
+
+  socket.on('attendee:notification', function(data){
+    console.log("THIAGO");
+  });
+	
 });
+
 </script>

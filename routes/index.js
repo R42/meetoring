@@ -39,13 +39,15 @@ routes.createMeeting = function(req, res, next){
 
 routes.joinMeeting = function(req, res, next) {
   var rate = req.body.rate;
+  var clientId = req.body.clientId;
+  
   rate = parseFloat(rate.replace(",", "."));
   
   Meeting.find(req.params.hash, function(meeting) {
     if (!meeting)
       res.send("Can't find that meeting", 404);
     else {
-      meeting.addAttendee(rate);
+      meeting.addAttendee(clientId,rate);
       res.json(meeting.clientModel());
     }
   });
@@ -63,5 +65,6 @@ routes.leaveMeeting = function(req, res, next) {
   });
 }
 
-module.exports = routes;
+routes["model"] = Meeting;
+module.exports = routes ;
 

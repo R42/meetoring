@@ -21,12 +21,13 @@ var post = function(url, data, callback) {
 	});
 };
 
-Meetoring.joinMeeting = function(meetingId, rate, callback) {
+Meetoring.joinMeeting = function(meetingId, rate, clientId, callback) {
   Meetoring.currentMeetingId = meetingId;
   Meetoring.currentRate = rate;
-  post('/join/' + meetingId, {rate: rate}, callback);
+  Meetoring.clientId= clientId;
+  post('/join/' + meetingId, {rate: rate, clientId: clientId}, callback);
 };
 
 Meetoring.leaveMeeting = function(callback) {
-  post('/leave/' + Meetoring.currentMeetingId, {rate: Meetoring.currentRate}, callback);
+  post('/leave/' + Meetoring.currentMeetingId, { rate: Meetoring.currentRate, clientId: Meetoring.clientId }, callback);
 };

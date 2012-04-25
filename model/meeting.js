@@ -17,18 +17,30 @@ var Meeting = function (name){
     this._total = 0;
     this._rate = 0; // per second -- 3 600 000 millis
     this._timeStamp = new Date();
-    
-    
-    
-    
+    this._class = Meeting;
 };
+
+
+Meeting._sockets = {};
 
 Meeting.find = function(hash,callback){
    storage.get(hash, callback);
 };
 
-Meeting.prototype = { 
-  new_record: function(){
+Meeting.setSocket = function(meetindId, clientId, socket){
+  var clients = this._sockets[meetindId];
+  if(!clients) this._sockets[meetindId] = {};
+  this._sockets[meetindId][clientId] = socket;
+};
+
+Meeting.notifyOthers = function(clientId, meetindId){
+  var me = this._sockets[meetindId][clientId];
+  if(me) me.broadcast.emit("attendee:notification");
+};
+
+
+Meeting.prototype = {
+   new_record: function(){
     return this._id !== undefined && this._id !== null;
   },
 
@@ -36,14 +48,15 @@ Meeting.prototype = {
     var bool = storage.set(this._id, this, callback);
   },
   
-  addAttendee: function(ratePerHour) {
+  addAttendee: function(clientId, ratePerHour) {
     var rate = ratePerHour / 3600 ;
     this._attendees.push(rate);
     
-    this.updateRate(rate);
+    this.updateRate(clientId, rate);
+    
   },
   
-  removeAttendee: function(ratePerHour) {
+  removeAttendee: function(clientId, ratePerHour) {
     var rate = ratePerHour / 3600 ;
     var index = _.indexOf(this._attendees, rate);
     
@@ -54,7 +67,7 @@ Meeting.prototype = {
     
     this._attendees.splice(index, 1);
     
-    this.updateRate(-rate);
+    this.updateRate(clientId, -rate);
   },
   
   updateTotal: function() {
@@ -65,9 +78,12 @@ Meeting.prototype = {
     this._total += this.getRate() * ( timespanMillis / 1000 );
   },
   
-  updateRate: function(rate) {
+  updateRate: function(clientId ,rate) {
     this.updateTotal();
     this._rate += rate;
+    debugger
+    this._class.notifyOthers(clientId, this._id);
+    
   },
   
   getRate: function() { return this._rate; },
@@ -78,7 +94,8 @@ Meeting.prototype = {
       rate: this.getRate().toFixed(2),
       total: this.getTotal().toFixed(2),
       id: this._id,
-      name: this._name
+      name: this._name,
+      clientId: +new Date
     };
   }
 };

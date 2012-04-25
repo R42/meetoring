@@ -7,6 +7,8 @@ var express = require('express')
   , ejsLayoutSupport = require('./lib/ejsLayoutSupport')
   , app = module.exports = express.createServer()
   , io = require('socket.io').listen(app);
+  , io = require('socket.io').listen(server)
+  , Meeting = routes.model
   
 console.log(io);
 
@@ -63,11 +65,17 @@ app.post('/'                , routes.createMeeting);
 app.post('/join/:hash'      , routes.joinMeeting);
 app.post('/leave/:hash'     , routes.leaveMeeting);
 
+
 io.sockets.on('connection', function (socket) {
-    socket.on('attendee:hello', function(data){
-      // 
+    socket.emit("name please?", {});
+    socket.on('my identification is', function(data){
+      var meetingId = data.meeting.id;
+      var clientId = data.meeting.clientId;
+      Meeting.setSocket(meetingId, clientId, socket);
     });
 });
+
+
 
 var port = app.settings.env == 'development' ? 3333 : 80;
 app.listen(port);
