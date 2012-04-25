@@ -2,16 +2,15 @@ require('console-trace')
 console.traceAlways = true;
 
 var express = require('express')
+  , http = require('http')
+  , app = express()
+  , server = http.createServer(app)
   , routes = require('./routes')
   , lessMiddleware = require('less-middleware')
   , ejsLayoutSupport = require('./lib/ejsLayoutSupport')
-  , app = module.exports = express.createServer()
-  , io = require('socket.io').listen(app);
-  , io = require('socket.io').listen(server)
+  , io = require('socket.io').listen(server);
   , Meeting = routes.model
   
-console.log(io);
-
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
