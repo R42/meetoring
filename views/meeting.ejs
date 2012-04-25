@@ -2,7 +2,8 @@
 <div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></span></div>
 
 <div id="form-join" class="form-inline">
-	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." class="focused input input-small" id="attendee-rate"></span>
+  <h5 id="join-this-meeting-question">Join this meeting?</h5>
+	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="attendee-rate" title="What is the cost of an hour of your time?"></span>
   <span><a id="attendee-join" class="btn btn-inverse">Join</a></span>
 </div>
 <div>
@@ -54,5 +55,7 @@ $(function() {
 	});
 	
 	setInterval(function() { socket.emit('syncRequest', meeting.id, sync); }, 5 * 1000);
+	
+	$('#attendee-rate').tooltip();
 });
 </script>

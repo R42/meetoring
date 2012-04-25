@@ -23,9 +23,9 @@ routes.index = function(req, res) {
  
 routes.createMeeting = function(req, res, next){
 
-  var meeting_name = req.body.meeting_name;
+  var meetingName = req.body.meetingName;
   
-  var meeting = new Meeting(meeting_name);
+  var meeting = new Meeting(meetingName);
   meeting.save(callback);
    
   function callback (saved) {

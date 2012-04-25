@@ -20,7 +20,7 @@ app.configure(function(){
          src: __dirname + '/public',
          force: true,
          once: false,
-         debug: false,
+         debug: true,
          compress: false
      }));
   app.use(express.static(__dirname + '/public'));
