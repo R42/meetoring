@@ -14,7 +14,7 @@
 
 <script>
 
-  var counter = new Meetoring.Counter(1);
+  var counter = new Meetoring.Counter(1, '#meetingTotalValue');
   var meeting = <%- JSON.stringify(meeting) %>;
   counter.init(meeting);
  
@@ -32,15 +32,13 @@
         counter.restart(meeting);
       };
     
-   $.ajax({
-      type: 'POST',
-      url: '/join/<%= meeting.id %>',
-      data: {rate: rate},
-      success: success,
-      dataType: 'json'
-   });
-          
-          
+	   $.ajax({
+	      type: 'POST',
+	      url: '/join/<%= meeting.id %>',
+	      data: {rate: rate},
+	      success: success,
+	      dataType: 'json'
+	   });  
    });
    
    counter.start();

@@ -1,11 +1,12 @@
 !function(){
     
-  var Class = function (_delay){
+  var Class = function (_delay, container){
     this.total = 0;
     this.rate = 0;
     this.delay =  ( _delay && _delay * 1030 ) || 1030;
     this.interval;
     this.state = "stopped";
+    this.container = container;
   };
   
   Class.prototype = {
@@ -52,7 +53,7 @@
     },
   
     this.render: function(){
-      $('#meetingTotalValue').text(this.total.toFixed(2));
+      $(this.container).text(this.total.toFixed(2));
     }
   };
   
