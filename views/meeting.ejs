@@ -4,6 +4,7 @@
 <div  id="form" class="form-inline">
 </div>
 
+<script src="/js/counter.js"></script>
 
 <script type="text/template" id="attendee_form_template">
     <span><input type="text" autocomplete="off" placeholder="Price per Hour..." class="focused input input-small" id="create-meeting-rate"></span>
@@ -13,61 +14,7 @@
 
 <script>
 
- function Counter(_delay){
-   this.total = 0;
-   this.rate = 0;
-   this.delay =  ( _delay && _delay * 1030 ) || 1030;
-   this.interval;
-   this.state="stopped";
-   
-   
-   this.init = function(meeting){
-     this.total = parseFloat(meeting.total);
-     this.rate = parseFloat(meeting.ratePerSecond);
-   };
-   
-   this.start = function(){
-     if( this.state=== "stopped"){
-       this.state = "running";
-       function bind(){
-         var that = this;
-         return function(){
-           that.increment();
-           that.render.call(that);
-         }
-       };
-       
-       this.interval = setInterval(bind.call(this),this.delay);
-     }
-   };
-   
-   this.increment = function(){
-     this.total += this.rate;
-     
-   };
-   
-   this.stop = function(){
-    if(this.state === "running"){
-      this.state = "stopped";
-      this.total = 0;
-      this.rate = 0;
-      clearInterval(this.interval)
-    }
-   };
-   
-   this.restart = function(meeting){
-     this.stop();
-     this.init(meeting);
-     this.start();
-   };
-   
-   this.render = function(){
-     $('#meetingTotalValue').text(this.total.toFixed(2));
-   }
-   
- }
-
-  var counter = new Counter(1);
+  var counter = new Meetoring.Counter(1);
   var meeting = <%- JSON.stringify(meeting) %>;
   counter.init(meeting);
  
