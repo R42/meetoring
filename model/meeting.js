@@ -25,7 +25,7 @@ Meeting.prototype = {
   },
   
   addAttendee: function(ratePerHour) {
-    var rate = ratePerHour / 60 ;
+    var rate = ratePerHour / 3600 ;
     this._attendees.push(rate);
     
     this.updateRate(rate);
