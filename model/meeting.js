@@ -7,7 +7,7 @@ var Meeting = function (name){
     this._name = name;
     this._attendees = [];
     this._total = 0;
-    this._rate = 0; // per minute -- 60000 millis
+    this._rate = 0; // per second -- 3 600 000 millis
     this._timeStamp = new Date();
 };
 
@@ -25,21 +25,24 @@ Meeting.prototype = {
   },
   
   addAttendee: function(ratePerHour) {
-    var ratePerMinute = ratePerHour / 60 ;
-    this._attendees.push(ratePerMinute);
+    var rate = ratePerHour / 60 ;
+    this._attendees.push(rate);
     
-    this.updateRate(ratePerMinute);
+    this.updateRate(rate);
   },
   
   removeAttendee: function(ratePerHour) {
-    var ratePerMinute = ratePerHour / 60 ;
-    var index = _.indexOf(this._attendees, ratePerMinute);
+    var rate = ratePerHour / 3600 ;
+    var index = _.indexOf(this._attendees, rate);
     
-    if (index == -1) return;
+    if (index == -1) {
+      console.log('Tried to remove an attendee that could not be found');
+      return;
+    }
     
     this._attendees.splice(index, 1);
     
-    this.updateRate(-ratePerMinute);
+    this.updateRate(-rate);
   },
   
   updateTotal: function() {
@@ -47,7 +50,7 @@ Meeting.prototype = {
     var timespanMillis = newTimestamp - this._timeStamp;
     this._timeStamp = newTimestamp
     
-    this._total += this.getRate() * timespanMillis / 60000;
+    this._total += this.getRate() * timespanMillis / 1000;
   },
   
   updateRate: function(rate) {
@@ -55,15 +58,12 @@ Meeting.prototype = {
     this._rate += rate;
   },
   
-  getRate: function(){ return this.getRate() / 60; },
-  getRatePerSecond: function(){ return this.getRate() / 60; },
   getRate: function() { return this._rate; },
   getTotal: function() { this.updateTotal(); return this._total; },
   
   clientModel: function() {
     return {
       rate: this.getRate().toFixed(2),
-      ratePerSecond: this.getRatePerSecond().toFixed(2),
       total: this.getTotal().toFixed(2),
       id: this._id,
       name: this._name
