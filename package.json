@@ -1,6 +1,12 @@
 {
     "name": "Meetoring"
-  , "version": "0.0.1"
+  , "subdomain": "meetoring",
+  , "domains": [
+        "meetoring.com",
+        "www.meetoring.com",
+        "meetor.in"
+      ]
+  , "version": "0.1.0"
   , "private": true
   , "dependencies": {
       "express": ">= 3.0.0alpha1"
