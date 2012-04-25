@@ -16,7 +16,7 @@
 <script>
 $(function() {
 	
-	var counter = new Meetoring.Counter(1, '#meetingTotalValue');
+	var counter = new Meetoring.Counter('#meetingTotalValue', 200);
   var meeting = <%- JSON.stringify(meeting) %>;
   counter.init(meeting);
 	counter.start();

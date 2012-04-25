@@ -2,16 +2,16 @@
   
   var STATE ={ 
     RUNNING: "running",
-    STOPPED: "stopped",
-    INITIAL: this.STOPPED
+    STOPPED: "stopped"
   };
     
-  var Class = function (_delay, container){
+  var Class = function (container, period){
     this.total = 0;
     this.rate = 0;
-    this.delay =  ( _delay && _delay * 1030 ) || 1030;
+    this.period = period || 1000;
+    this.delay =  period + 30;
     this.interval;
-    this.state = STATE.INITIAL;
+    this.state = STATE.STOPPED;
     this.container = container;
   };
   
@@ -38,7 +38,7 @@
     },
 
     increment: function(){
-      this.total += this.rate;
+      this.total += this.rate * this.period / 1000;
     },
 
     stop: function(){
