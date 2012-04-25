@@ -2,14 +2,14 @@ require('console-trace')
 console.traceAlways = true;
 
 var express = require('express')
+  , http = require('http')
+  , app = express()
+  , server = http.createServer(app)
   , routes = require('./routes')
   , lessMiddleware = require('less-middleware')
   , ejsLayoutSupport = require('./lib/ejsLayoutSupport')
-  , app = module.exports = express.createServer()
-  , io = require('socket.io').listen(app);
+  , io = require('socket.io').listen(server);
   
-console.log(io);
-
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
@@ -65,10 +65,11 @@ app.post('/leave/:hash'     , routes.leaveMeeting);
 
 io.sockets.on('connection', function (socket) {
     socket.on('attendee:hello', function(data){
-      // 
+      //
     });
 });
 
 var port = app.settings.env == 'development' ? 3333 : 80;
-app.listen(port);
+server.listen(port);
 console.log("Express server listening on port %d in %s mode", port, app.settings.env);
+
