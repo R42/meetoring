@@ -1,11 +1,17 @@
 (function(){
+  
+  var STATE ={ 
+    RUNNING: "running",
+    STOPPED: "stopped",
+    INITIAL: this.STOPPED
+  };
     
   var Class = function (_delay, container){
     this.total = 0;
     this.rate = 0;
     this.delay =  ( _delay && _delay * 1030 ) || 1030;
     this.interval;
-    this.state = "stopped";
+    this.state = STATE.INITIAL;
     this.container = container;
   };
   
@@ -17,10 +23,10 @@
     },
   
     start: function(){
-      if( this.state == "running")
+      if( this.state === STATE.RUNNING )
         return;
         
-      this.state = "running";
+      this.state = STATE.RUNNING;
 
       var self = this;        
       var ticker = function() {
@@ -36,10 +42,10 @@
     },
 
     stop: function(){
-      if(this.state === "stopped")
+      if(this.state === STATE.STOPPED)
         return;
         
-      this.state = "stopped";
+      this.state = STATE.STOPPED;
       clearInterval(this.interval);
     },
   
