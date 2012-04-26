@@ -39,7 +39,7 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  app.session = require('./lib/memoryStore');
+  // app.session = require('./lib/memoryStore');
   
   require('console-trace')
   console.traceAlways = true;
@@ -47,7 +47,7 @@ app.configure('development', function(){
 
 app.configure('staging', 'production', function(){
   app.use(express.errorHandler());
-  app.session = require('./lib/redisStore');
+  // app.session = require('./lib/redisStore');
   
   app.use(lessMiddleware({
          src: __dirname + '/public',
