@@ -1,6 +1,3 @@
-require('console-trace')
-console.traceAlways = true;
-
 var express = require('express')
   , http = require('http')
   , app = express()
@@ -43,9 +40,12 @@ app.configure(function(){
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
   app.session = require('./lib/memoryStore');
+  
+  require('console-trace')
+  console.traceAlways = true;
 });
 
-app.configure('staging production', function(){
+app.configure('staging', 'production', function(){
   app.use(express.errorHandler());
   app.session = require('./lib/redisStore');
   
