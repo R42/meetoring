@@ -57,5 +57,10 @@ $(function() {
 	setInterval(function() { socket.emit('syncRequest', meeting.id, sync); }, 5 * 1000);
 	
 	$('#attendee-rate').tooltip();
+	$("#attendee-rate").keyup(function(event){
+      if(event.keyCode == 13){
+          $("#attendee-join").click();
+      }
+  });
 });
 </script>
