@@ -20,8 +20,21 @@
   transform: rotate(@radius);
 }
 
-#main {
+.footer.wrapper p {
+	position: fixed;
+	bottom: 0px;
+}
+
+#the-title {
+	font-size: 80px;
+	line-height: 80px;
+	display: block;
+	margin-bottom: 20px;
+}
+
+#main-content {
   text-align: center;
+	padding: 40px 0px;
 }
 
 #logo-m {
@@ -34,7 +47,7 @@
   margin-left: 15px;
 }
 
-#create-meeting-name {
+.btn.btn-inverse, input[type="text"] {
   border-radius: 8px;
 }
 
@@ -63,6 +76,13 @@
     font-size: 80px;
     line-height: 80px; 
   }
+
+	#punchline {
+		font-size: 20px;
+		line-height: 20px;
+		display: block;
+		margin: 20px 0px;
+	}
 }
 
 @media only screen and (max-width: 480px) {

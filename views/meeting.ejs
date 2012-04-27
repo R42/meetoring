@@ -1,15 +1,17 @@
-<h3>Meeting <strong><%= meeting.name %></strong></h3>
-<div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></span></div>
+<div id="main-content">
+  <h3>Meeting <strong><%= meeting.name %></strong></h3>
+  <div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></span></div>
 
-<div id="form-join" class="form-inline">
-  <h5 id="join-this-meeting-question">Join this meeting?</h5>
-	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="attendee-rate" title="What is the cost of an hour of your time?"></span>
-  <span><a id="attendee-join" class="btn btn-inverse">Join</a></span>
-</div>
-<div>
+  <div id="form-join" class="form-inline">
+    <h5 id="join-this-meeting-question">Join this meeting?</h5>
+  	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="attendee-rate" title="What is the cost of an hour of your time?"></span>
+    <span><a id="attendee-join" class="btn btn-inverse">Join</a></span>
+  </div>
+  <div>
 
-<div id="form-leave" class="form-inline hidden">
-	<span><a id="attendee-leave" class="btn btn-inverse">Leave</a></span>
+  <div id="form-leave" class="form-inline hidden">
+  	<span><a id="attendee-leave" class="btn btn-inverse">Leave</a></span>
+  </div>
 </div>
 	
 <script src="/js/counter.js"></script>
