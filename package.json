@@ -6,7 +6,7 @@
     "www.meetoring.com",
     "meetor.in"
   ],
-  "version": "0.1.0-2",
+  "version": "0.1.0-3",
   "private": true,
   "engines": {
     "node": "0.6.x"
