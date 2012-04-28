@@ -110,6 +110,7 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
+app.locals.env = app.settings.env
 var port = app.settings.env == 'development' ? 3333 : 80;
 server.listen(port);
 console.log("Express server listening on port %d in %s mode", port, app.settings.env);
