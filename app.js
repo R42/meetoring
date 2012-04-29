@@ -4,13 +4,13 @@ var express = require('express')
   , server = http.createServer(app)
   , routes = require('./routes')
   , lessMiddleware = require('less-middleware')
-  , ejsLayoutSupport = require('./lib/ejsLayoutSupport')
-  , io = require('socket.io').listen(server);
-
+  , expressLayouts = require('express-ejs-layouts')
+  , io = require('socket.io').listen(server)
   
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
+  app.set("layout extractScripts", true);
   
   app.use(express.bodyParser());
   app.use(express.methodOverride());
@@ -23,7 +23,7 @@ app.configure(function(){
      }));
   app.use(express.static(__dirname + '/public'));
   app.use(express.cookieParser());
-  app.use(ejsLayoutSupport);
+  app.use(expressLayouts);
   app.use(app.router);
   
   app.use(function(err, req, res, next){
@@ -40,7 +40,6 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  // app.session = require('./lib/memoryStore');
   
   require('console-trace')
   console.traceAlways = true;
@@ -48,7 +47,6 @@ app.configure('development', function(){
 
 app.configure('staging', 'production', function(){
   app.use(express.errorHandler());
-  // app.session = require('./lib/redisStore');
   
   app.use(lessMiddleware({
          src: __dirname + '/public',
