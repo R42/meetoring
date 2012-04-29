@@ -63,22 +63,6 @@ Meeting.on("meeting:attendee:colaborator:removed"   , function(data){
 
 
 
-
-Meeting.on("meeting:attendee:spectator:connected"   , function(data){
-
-});
-
-Meeting.on("meeting:attendee:spectator:disconected" , function(data){
-
-});
-
-
-Meeting.on("meeting:closed"                         , function(data){
-
-});
-
-
-
 var multicast = {};
 
 function emitMulticast(client, meeting, includeMe){
