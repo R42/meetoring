@@ -25,7 +25,8 @@ Meetoring.joinMeeting = function(meetingId, rate, clientId, callback) {
   Meetoring.currentMeetingId = meetingId;
   Meetoring.currentRate = rate;
   Meetoring.clientId= clientId;
-  post('/join/' + meetingId, {rate: rate, clientId: clientId}, callback);
+  var url = '/join/' + meetingId;
+  post(url, {rate: rate, clientId: clientId}, callback);
 };
 
 Meetoring.leaveMeeting = function(callback) {

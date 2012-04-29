@@ -38,8 +38,8 @@ routes.createMeeting = function(req, res, next){
 }; 
 
 routes.joinMeeting = function(req, res, next) {
-  var rate = req.body.rate;
-  var clientId = req.body.clientId;
+  var rate = req.body.rate
+    , clientId = req.body.clientId;
   
   rate = parseFloat(rate.replace(",", "."));
   
@@ -54,12 +54,13 @@ routes.joinMeeting = function(req, res, next) {
 }
 
 routes.leaveMeeting = function(req, res, next) {
+  var clientId = req.body.clientId;
   Meeting.find(req.params.hash, function (meeting) {
     if (!meeting)
       res.send("Can't find that meeting", 404);
     else {
       var rate = req.body.rate;
-      meeting.removeAttendee(rate);
+      meeting.removeAttendee(clientId, rate);
       res.json(meeting.clientModel());
     }
   });

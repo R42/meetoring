@@ -8,8 +8,8 @@ var express = require('express')
   , routes = require('./routes')
   , lessMiddleware = require('less-middleware')
   , ejsLayoutSupport = require('./lib/ejsLayoutSupport')
-  , io = require('socket.io').listen(server);
-  , Meeting = routes.model
+  , io = require('socket.io').listen(server)
+  , Meeting = require('./model/meeting')
   
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -65,17 +65,13 @@ app.post('/join/:hash'      , routes.joinMeeting);
 app.post('/leave/:hash'     , routes.leaveMeeting);
 
 
-io.sockets.on('connection', function (socket) {
-    socket.emit("name please?", {});
-    socket.on('my identification is', function(data){
-      var meetingId = data.meeting.id;
-      var clientId = data.meeting.clientId;
-      Meeting.setSocket(meetingId, clientId, socket);
-    });
-});
+require('./model/realtime-engine')(io);
 
 
 
+app.locals.env = app.settings.env
 var port = app.settings.env == 'development' ? 3333 : 80;
-app.listen(port);
+server.listen(port);
 console.log("Express server listening on port %d in %s mode", port, app.settings.env);
+
+

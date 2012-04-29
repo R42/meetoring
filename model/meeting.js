@@ -1,16 +1,21 @@
-var crc32 = require('../lib/crc32');
-var storage = require('../lib/memoryStore');
-var _ = require('underscore');
+var   crc32         = require('../lib/crc32')
+    , storage       = require('../lib/memoryStore')
+    , _             = require('underscore')
+    , EventEmitter  = require('events').EventEmitter;
+        
 
-
-//Private Function
+//private Method - Meeting Unique Id Generator 
 function meetingUUID(name){
   var id = +new Date + "#" + name; 
   var UUID = crc32(id);
   return UUID;
 }
 
-var Meeting = function (name){    
+function Meeting (name){
+   if(false === (this instanceof Meeting)) {
+      return new Meeting();
+   }
+
     this._id = meetingUUID(name);
     this._name = name;
     this._attendees = [];
@@ -18,26 +23,13 @@ var Meeting = function (name){
     this._rate = 0; // per second -- 3 600 000 millis
     this._timeStamp = new Date();
     this._class = Meeting;
+    
 };
 
-
-Meeting._sockets = {};
 
 Meeting.find = function(hash,callback){
    storage.get(hash, callback);
 };
-
-Meeting.setSocket = function(meetindId, clientId, socket){
-  var clients = this._sockets[meetindId];
-  if(!clients) this._sockets[meetindId] = {};
-  this._sockets[meetindId][clientId] = socket;
-};
-
-Meeting.notifyOthers = function(clientId, meetindId){
-  var me = this._sockets[meetindId][clientId];
-  if(me) me.broadcast.emit("attendee:notification");
-};
-
 
 Meeting.prototype = {
    new_record: function(){
@@ -48,17 +40,20 @@ Meeting.prototype = {
     var bool = storage.set(this._id, this, callback);
   },
   
-  addAttendee: function(clientId, ratePerHour) {
+  addAttendee: function(viewerId, ratePerHour) {
     var rate = ratePerHour / 3600 ;
-    this._attendees.push(rate);
     
-    this.updateRate(clientId, rate);
+    this._attendees.push(ratePerHour + "");
+    
+    this.updateRate(rate);
+    this._class.emit("meeting:attendee:colaborator:added", { meeting: { id: this._id, rate: this.getRate(), total: this.getTotal() }, client: viewerId });
     
   },
   
-  removeAttendee: function(clientId, ratePerHour) {
+  removeAttendee: function(viewerId, ratePerHour) {
     var rate = ratePerHour / 3600 ;
-    var index = _.indexOf(this._attendees, rate);
+    
+    var index = _.indexOf(this._attendees, ratePerHour+"");
     
     if (index == -1) {
       console.log('Tried to remove an attendee that could not be found');
@@ -66,8 +61,9 @@ Meeting.prototype = {
     }
     
     this._attendees.splice(index, 1);
+    this.updateRate(-rate);
+    this._class.emit("meeting:attendee:colaborator:removed", {meeting: this.clientModel() , client: viewerId});
     
-    this.updateRate(clientId, -rate);
   },
   
   updateTotal: function() {
@@ -78,12 +74,9 @@ Meeting.prototype = {
     this._total += this.getRate() * ( timespanMillis / 1000 );
   },
   
-  updateRate: function(clientId ,rate) {
+  updateRate: function(rate) {
     this.updateTotal();
-    this._rate += rate;
-    debugger
-    this._class.notifyOthers(clientId, this._id);
-    
+    this._rate += rate;    
   },
   
   getRate: function() { return this._rate; },
@@ -94,10 +87,13 @@ Meeting.prototype = {
       rate: this.getRate().toFixed(2),
       total: this.getTotal().toFixed(2),
       id: this._id,
-      name: this._name,
-      clientId: +new Date
+      name: this._name
     };
   }
 };
+
+Meeting.__proto__ = EventEmitter.prototype;
+EventEmitter.call(Meeting);
+
 
 module.exports = exports = Meeting;
