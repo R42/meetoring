@@ -42,11 +42,13 @@ routes.joinMeeting = function(req, res, next) {
     , clientId = req.body.clientId;
   
   rate = parseFloat(rate.replace(",", "."));
-  
+    
   Meeting.find(req.params.hash, function(meeting) {
-    if (!meeting)
+    if (!meeting){
       res.send("Can't find that meeting", 404);
-    else {
+    }else {
+      if( isNaN(rate) ) return res.json(meeting.clientModel());
+                
       meeting.addAttendee(clientId,rate);
       res.json(meeting.clientModel());
     }
