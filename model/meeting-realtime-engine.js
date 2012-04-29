@@ -9,8 +9,8 @@ function MeetingRealtimeEngine(socket){
     Meeting.emit('meeting:attendee:spectator:entered', { meeting: {id: meetingId}, socket: socket });
   });
   
-  socket.on('meeting:resync', function(meeting){
-    var id = meeting.id;
+  socket.on('meeting:resync', function(data){
+    var id = data.meeting.id;
     Meeting.find(id, function (meeting) {
     if(meeting !== undefined && meeting !== null) Meeting.emit('meeting:resync', { meeting: meeting,  socket: socket });
   });
@@ -19,7 +19,7 @@ function MeetingRealtimeEngine(socket){
 }
 
 Meeting.on('meeting:resync'                         , function(data){
-  multicastEveryone(data.meeting);
+  multicastEveryone(data.meeting.clientModel());
 });
 
 
@@ -60,8 +60,6 @@ Meeting.on("meeting:attendee:colaborator:removed"   , function(data){
     multicastOthes(client, meeting);
     
 });
-
-
 
 var multicast = {};
 

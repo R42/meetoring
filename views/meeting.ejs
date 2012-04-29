@@ -32,7 +32,7 @@ $(function() {
  var socketio = io.connect('/meeting');
  socketio.on('connect', function(){
    var  meeting   = <%- JSON.stringify(meeting) %>
-      , counter   = new Meetoring.Counter('#meetingTotalValue', 200)
+      , counter   = new Meetoring.Counter('#meetingTotalValue', 200, 10000)
       , clientId  = socketio.socket.sessionid;
    
     counter.init(meeting);
@@ -65,18 +65,18 @@ $(function() {
     });
    });
    
+   $(document).bind("socket:sync", function(event){
+     socketio.emit("meeting:resync", {meeting: {id: meeting.id}});
+   });
+   
    socketio.emit("meeting:attendee:spectator:entered", { meeting: {id: meeting.id ,clientId: socketio.socket.sessionid } });
    
    socketio.on('sync:rate', function (meeting) {
-       console.log("IA BA DA BA DA BA DUUUUU !!! " +new Date);
        counter.restart(meeting);  
    });
    
-   
-
  });
 
-	//setInterval(function() { socket.emit('syncRequest', meeting.id, sync); }, 5 * 1000);
 	
 });
 

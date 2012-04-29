@@ -37,7 +37,7 @@ routes.createMeeting = function(req, res, next){
    }
 };
 
-routes.joinMeeting = function(req, res, next) {
+routes.joinMeeting = function(req, res, next) { 
   var rate = req.body.rate
     , clientId = req.body.clientId;
   
