@@ -1,14 +1,17 @@
-<h3>Meeting <strong><%= meeting.name %></strong></h3>
-<div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></span></div>
+<div id="main-content">
+  <h3>Meeting <strong><%= meeting.name %></strong></h3>
+  <div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></span></div>
 
-<div id="form-join" class="form-inline">
- <span><input type="text" autocomplete="off" placeholder="Price per Hour..." class="focused input input-small" id="attendee-rate"></span>
- <span><a id="attendee-join" class="btn btn-inverse">Join</a></span>
-</div>
-<div>
+  <div id="form-join" class="form-inline">
+    <h5 id="join-this-meeting-question">Join this meeting?</h5>
+  	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="attendee-rate" title="What is the cost of an hour of your time?"></span>
+    <span><a id="attendee-join" class="btn btn-inverse">Join</a></span>
+  </div>
+  <div>
 
-<div id="form-leave" class="form-inline hidden">
- <span><a id="attendee-leave" class="btn btn-inverse">Leave</a></span>
+  <div id="form-leave" class="form-inline hidden">
+  	<span><a id="attendee-leave" class="btn btn-inverse">Leave</a></span>
+  </div>
 </div>
  
 <script src="/js/counter.js"></script>
@@ -17,18 +20,26 @@
 
 
 $(function() {
- var socketio = io.connect('http://localhost:3333/meeting');
 
+  $("#attendee-rate").keyup(function(event){
+      if(event.keyCode == 13){
+          $("#attendee-join").click();
+      }
+  });
+
+ $('#attendee-rate').tooltip();
+
+ var socketio = io.connect('http://localhost:3333/meeting');
  socketio.on('connect', function(){
-   var meeting   = <%- JSON.stringify(meeting) %>
+   var  meeting   = <%- JSON.stringify(meeting) %>
       , counter   = new Meetoring.Counter('#meetingTotalValue', 200)
       , clientId  = socketio.socket.sessionid;
    
     counter.init(meeting);
-   counter.start();
+    counter.start();
 
    var onError = function(error) {
-    alert(error);
+     console.log("ERROR ... ERROR ...");
    };
 
    $('#attendee-join').click(function(event){ 
@@ -65,6 +76,8 @@ $(function() {
 
  });
 
+	//setInterval(function() { socket.emit('syncRequest', meeting.id, sync); }, 5 * 1000);
+	
 });
 
 </script>

@@ -32,3 +32,4 @@ Meetoring.joinMeeting = function(meetingId, rate, clientId, callback) {
 Meetoring.leaveMeeting = function(callback) {
   post('/leave/' + Meetoring.currentMeetingId, { rate: Meetoring.currentRate, clientId: Meetoring.clientId }, callback);
 };
+

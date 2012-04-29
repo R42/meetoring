@@ -20,8 +20,21 @@
   transform: rotate(@radius);
 }
 
-#main {
+.footer.wrapper p {
+	position: fixed;
+	bottom: 0px;
+}
+
+#the-title {
+	font-size: 80px;
+	line-height: 80px;
+	display: block;
+	margin-bottom: 20px;
+}
+
+#main-content {
   text-align: center;
+	padding: 40px 0px;
 }
 
 #logo-m {
@@ -34,14 +47,18 @@
   margin-left: 15px;
 }
 
-#create-meeting-name {
+.btn.btn-inverse, input[type="text"] {
   border-radius: 8px;
 }
 
 #start-monitoring-form {
-  max-width: 400px;
+  max-width: 320px;
   margin: auto;
   text-align: center;
+}
+
+#join-this-meeting-question {
+	margin-top: 15px;
 }
 
 @media only screen and (min-width: 768px) {
@@ -59,9 +76,40 @@
     font-size: 80px;
     line-height: 80px; 
   }
+
+	#punchline {
+		font-size: 20px;
+		line-height: 20px;
+		display: block;
+		margin: 20px 0px;
+	}
 }
 
 @media only screen and (max-width: 480px) {
   #rest-of-the-title { display: none; }
   #smaller-title { display: block; }
+
+
+  #punchline {
+    font-size: 14px;
+  }
+	.form-inline {
+		.btn.btn-inverse {
+	    margin-top: 5px;	
+			width: 92%;
+		}
+		input[type="text"] {
+			letter-spacing: 2px;
+			border-radius: 8px;
+			width: 87%;
+		}
+	}
+	
+	#attendee-rate { width: 92%; }
+	#attendee-join { width: 87%; }
+	
+	#total {
+    font-size: 35px;
+    line-height: 40px; 
+  }
 }

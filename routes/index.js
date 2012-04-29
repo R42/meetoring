@@ -22,20 +22,20 @@ routes.index = function(req, res) {
  */
  
 routes.createMeeting = function(req, res, next){
+  var meetingName = req.body.meetingName;
+  var meeting = new Meeting(meetingName);
 
-  var meeting_name = req.body.meeting_name;
-  
-  var meeting = new Meeting(meeting_name);
   meeting.save(callback);
    
   function callback (saved) {
      if (saved) {
+          console.log('Created /' + meeting._id);
           res.redirect('/' + meeting._id);    
-      }else{
+      } else {
         res.render('index', { title: 'Meetoring' })
       }
-   }//CALLBACK
-}; 
+   }
+};
 
 routes.joinMeeting = function(req, res, next) {
   var rate = req.body.rate
@@ -66,6 +66,5 @@ routes.leaveMeeting = function(req, res, next) {
   });
 }
 
-routes["model"] = Meeting;
-module.exports = routes ;
+module.exports = routes;
 

@@ -23,7 +23,7 @@ function Meeting (name){
     this._rate = 0; // per second -- 3 600 000 millis
     this._timeStamp = new Date();
     this._class = Meeting;
-    
+
 };
 
 
