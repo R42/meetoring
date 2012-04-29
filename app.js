@@ -5,9 +5,7 @@ var express = require('express')
   , routes = require('./routes')
   , lessMiddleware = require('less-middleware')
   , ejsLayoutSupport = require('./lib/ejsLayoutSupport')
-<<<<<<< HEAD
-  , io = require('socket.io').listen(server)
-  , Meeting = require('./model/meeting')
+  , io = require('socket.io').listen(server);
 
   
 app.configure(function(){
@@ -63,70 +61,13 @@ app.configure('staging', 'production', function(){
 
 app.get('/:hash?'           , routes.index);
 app.post('/'                , routes.createMeeting);
+app.post('/join/:hash'      , routes.joinMeeting);
+app.post('/leave/:hash'     , routes.leaveMeeting);
 
-<<<<<<< HEAD
 
 require('./model/realtime-engine')(io);
 
-
-
-=======
-var Meeting = require('./model/meeting');
-io.sockets.on('connection', function (socket) {
-  
-  socket.on('syncRequest', function(meetingId, ack) {
-    Meeting.find(meetingId, function(meeting) {
-      if (!meeting) ack(null);
-      else ack(meeting.clientModel());
-    });
-  });
-  
-  socket.on('join', function(data, ack) {
-    var rate = data.rate;
-    var meetingId = data.meetingId;
-    
-    rate = parseFloat(rate.toString().replace(",", "."));
-
-    Meeting.find(meetingId, function(meeting) {
-      if (!meeting)
-        res.send("Can't find that meeting", 404);
-      else {
-        meeting.addAttendee(rate);
-        var clientModel = meeting.clientModel();
-
-        ack(clientModel);
-        socket.volatile.broadcast.emit('sync', clientModel);
-      }
-    });
-  });
-  
-  socket.on('leave', function(data, ack) {
-    var rate = data.rate;
-    var meetingId = data.meetingId;
-    
-    rate = parseFloat(rate.toString().replace(",", "."));
-
-    Meeting.find(meetingId, function(meeting) {
-      if (!meeting)
-        res.send("Can't find that meeting", 404);
-      else {
-        meeting.removeAttendee(rate);
-        var clientModel = meeting.clientModel();
-
-        ack(clientModel);
-        socket.volatile.broadcast.emit('sync', clientModel);
-      }
-    });
-  });
-});
-
->>>>>>> master
 app.locals.env = app.settings.env
 var port = app.settings.env == 'development' ? 3333 : 80;
 server.listen(port);
 console.log("Express server listening on port %d in %s mode", port, app.settings.env);
-
-<<<<<<< HEAD
-
-=======
->>>>>>> master
