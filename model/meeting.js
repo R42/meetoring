@@ -92,8 +92,8 @@ Meeting.prototype = {
   }
 };
 
+
 Meeting.__proto__ = EventEmitter.prototype;
 EventEmitter.call(Meeting);
-
 
 module.exports = exports = Meeting;
