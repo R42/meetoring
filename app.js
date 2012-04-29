@@ -46,7 +46,7 @@ app.configure('development', function(){
   console.traceAlways = true;
 });
 
-app.configure('staging', 'production', function(){
+app.configure('production', function(){
   app.use(express.errorHandler());
   // app.session = require('./lib/redisStore');
   
