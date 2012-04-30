@@ -13,56 +13,71 @@
   	<span><a id="attendee-leave" class="btn btn-inverse">Leave</a></span>
   </div>
 </div>
-	
+ 
 <script src="/js/counter.js"></script>
 
 <script>
+
+
 $(function() {
-	
-	var counter = new Meetoring.Counter('#meetingTotalValue', 200);
-  var meeting = <%- JSON.stringify(meeting) %>;
-  counter.init(meeting);
-	counter.start();
-	
-	var sync = function(data) {
-		meeting = data;
-		counter.restart(meeting);
-	};
-	
-	var socket = io.connect();
-	socket.on('sync', sync);
 
-	var rate = 0;
-	var action = function(event, fn) {
-		socket.emit(event, { rate: rate, meetingId: meeting.id }, function(data) {
-			sync(data);
-			if (fn) fn();
-		});
-	};
-	
-	$('#attendee-join').click(function(event){ 
-		rate =  $("#attendee-rate").attr('value');
-
-		action('join', function(data) {
-			$("#form-join").hide();
-			$("#form-leave").removeClass('hidden').show();
-		});
-	});
-	
-	$('#attendee-leave').click(function(event){ 
-		action('leave', function(data) {
-			$("#form-leave").hide();
-			$("#form-join").show();
-		});
-	});
-	
-	setInterval(function() { socket.emit('syncRequest', meeting.id, sync); }, 5 * 1000);
-	
-	$('#attendee-rate').tooltip();
-	$("#attendee-rate").keyup(function(event){
+  $("#attendee-rate").keyup(function(event){
       if(event.keyCode == 13){
           $("#attendee-join").click();
       }
   });
+
+ $('#attendee-rate').tooltip();
+
+ var socketio = io.connect('/meeting');
+ socketio.on('connect', function(){
+   var  meeting   = <%- JSON.stringify(meeting) %>
+      , counter   = new Meetoring.Counter('#meetingTotalValue', 200, 10000)
+      , clientId  = socketio.socket.sessionid;
+   
+    counter.init(meeting);
+    counter.start();
+
+   var onError = function(error) {
+     console.log("ERROR ... ERROR ...");
+   };
+
+   $('#attendee-join').click(function(event){ 
+    var rate =  $("#attendee-rate").attr('value');
+    Meetoring.joinMeeting(meeting.id, rate, clientId, function(error, data) {
+     if (error) onError(error);
+
+     meeting = data;
+     $("#form-join").hide();
+     $("#form-leave").removeClass('hidden').show();
+     counter.restart(meeting);     
+    });
+   });
+
+   $('#attendee-leave').click(function(event){ 
+    Meetoring.leaveMeeting(function(error, data) {
+     if (error) onError(error);
+
+     meeting = data;
+     $("#form-leave").hide();
+     $("#form-join").show();
+     counter.restart(meeting);  
+    });
+   });
+   
+   $(document).bind("socket:sync", function(event){
+     socketio.emit("meeting:resync", {meeting: {id: meeting.id}});
+   });
+   
+   socketio.emit("meeting:attendee:spectator:entered", { meeting: {id: meeting.id ,clientId: socketio.socket.sessionid } });
+   
+   socketio.on('sync:rate', function (meeting) {
+       counter.restart(meeting);  
+   });
+   
+ });
+
+	
 });
+
 </script>

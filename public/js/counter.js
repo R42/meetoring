@@ -1,11 +1,13 @@
-(function(){
+(function(global){
   
   var STATE ={ 
     RUNNING: "running",
     STOPPED: "stopped"
   };
+  
+  var $ = window.$;
     
-  var Class = function (container, period){
+  var Class = function (container, period, syncTime){
     this.total = 0;
     this.rate = 0;
     this.period = period || 1000;
@@ -13,6 +15,8 @@
     this.interval;
     this.state = STATE.STOPPED;
     this.container = container;
+    this.syncTime = syncTime || 15000 ;
+    this.syncronizer = null; 
   };
   
   Class.prototype = {
@@ -33,8 +37,13 @@
         self.increment();
         self.render();
       };
+      
+      function syncronizer(){
+        self.sync();
+      }
     
-      this.interval = setInterval(ticker, this.delay);
+      this.interval     = setInterval(ticker, this.delay);
+      this.syncronizer  = setInterval(syncronizer ,this.syncTime);
     },
 
     increment: function(){
@@ -47,6 +56,7 @@
         
       this.state = STATE.STOPPED;
       clearInterval(this.interval);
+      clearInterval(this.syncronizer);
     },
   
     restart: function(meeting){
@@ -57,7 +67,12 @@
   
     render: function(){
       $(this.container).text(this.total.toFixed(2));
+    },
+    
+    sync: function(){
+      $(document).trigger("socket:sync");
     }
+    
   };
 
   window.Meetoring.Counter = Class;

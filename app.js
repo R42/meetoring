@@ -40,7 +40,6 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  // app.session = require('./lib/memoryStore');
   
   require('console-trace')
   console.traceAlways = true;
@@ -48,7 +47,6 @@ app.configure('development', function(){
 
 app.configure('production', function(){
   app.use(express.errorHandler());
-  // app.session = require('./lib/redisStore');
   
   app.use(lessMiddleware({
          src: __dirname + '/public',
@@ -61,58 +59,13 @@ app.configure('production', function(){
 
 app.get('/:hash?'           , routes.index);
 app.post('/'                , routes.createMeeting);
+app.post('/join/:hash'      , routes.joinMeeting);
+app.post('/leave/:hash'     , routes.leaveMeeting);
 
-var Meeting = require('./model/meeting');
-io.sockets.on('connection', function (socket) {
-  
-  socket.on('syncRequest', function(meetingId, ack) {
-    Meeting.find(meetingId, function(meeting) {
-      if (!meeting) ack(null);
-      else ack(meeting.clientModel());
-    });
-  });
-  
-  socket.on('join', function(data, ack) {
-    var rate = data.rate;
-    var meetingId = data.meetingId;
-    
-    rate = parseFloat(rate.toString().replace(",", "."));
 
-    Meeting.find(meetingId, function(meeting) {
-      if (!meeting)
-        res.send("Can't find that meeting", 404);
-      else {
-        meeting.addAttendee(rate);
-        var clientModel = meeting.clientModel();
-
-        ack(clientModel);
-        socket.volatile.broadcast.emit('sync', clientModel);
-      }
-    });
-  });
-  
-  socket.on('leave', function(data, ack) {
-    var rate = data.rate;
-    var meetingId = data.meetingId;
-    
-    rate = parseFloat(rate.toString().replace(",", "."));
-
-    Meeting.find(meetingId, function(meeting) {
-      if (!meeting)
-        res.send("Can't find that meeting", 404);
-      else {
-        meeting.removeAttendee(rate);
-        var clientModel = meeting.clientModel();
-
-        ack(clientModel);
-        socket.volatile.broadcast.emit('sync', clientModel);
-      }
-    });
-  });
-});
+require('./model/realtime-engine')(io);
 
 app.locals.env = app.settings.env
 var port = app.settings.env == 'development' ? 3333 : 80;
 server.listen(port);
 console.log("Express server listening on port %d in %s mode", port, app.settings.env);
-
