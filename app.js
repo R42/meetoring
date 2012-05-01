@@ -16,7 +16,6 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(lessMiddleware);
-  app.use(assetManagerMiddleware)
   app.use(express.static(__dirname + '/public'));
   app.use(express.cookieParser());
   app.use(expressLayouts);
