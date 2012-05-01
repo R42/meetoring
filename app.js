@@ -13,6 +13,8 @@ app.configure(function(){
   app.set('view engine', 'ejs');
   app.set("layout extractScripts", true);
 
+  app.use(express.favicon('public/icon.ico'))
+
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(lessMiddleware);
