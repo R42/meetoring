@@ -1,6 +1,6 @@
 var   crc32         = require('../lib/crc32')
     , storage       = require('../lib/memoryStore')
-    , _             = require('underscore')
+    , _             = require('lodash')
     , EventEmitter  = require('events').EventEmitter;
         
 

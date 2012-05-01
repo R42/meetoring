@@ -1,5 +1,5 @@
 var Meeting = require('./meeting')
-, _ = require('underscore');
+, _ = require('lodash');
 
 
 function MeetingRealtimeEngine(socket){

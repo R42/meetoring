@@ -1,38 +1,28 @@
 var express = require('express')
-  , http = require('http')
   , app = express()
+  , conf = require('./config')(app.settings.env)
+  , http = require('http')
   , server = http.createServer(app)
-  , routes = require('./routes')
-  , lessMiddleware = require('less-middleware')
-  , expressLayouts = require('express-ejs-layouts')
   , io = require('socket.io').listen(server)
-  
+  , lessMiddleware = require('less-middleware')(conf.lessMiddleware)
+  , assetManagerMiddleware = require('connect-assetmanager')(conf.assetManager)
+  , expressLayouts = require('express-ejs-layouts')
+  , routes = require('./routes')
+
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.set("layout extractScripts", true);
-  
+
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(lessMiddleware({
-         src: __dirname + '/public',
-         force: true,
-         once: false,
-         debug: true,
-         compress: false
-     }));
+  app.use(lessMiddleware);
+  app.use(assetManagerMiddleware)
   app.use(express.static(__dirname + '/public'));
   app.use(express.cookieParser());
   app.use(expressLayouts);
   app.use(app.router);
-  
-  app.use(function(err, req, res, next){
-    res.render('500.html.ejs', {
-        status: err.status || 500
-      , error: err
-    });
-  });
-  
+
   app.use(function(req, res){
      res.render('404.html.ejs');
   });
@@ -40,21 +30,13 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  
-  require('console-trace')
+
+  require('console-trace');
   console.traceAlways = true;
 });
 
-app.configure('production', function(){
+app.configure('production', 'stage', function(){
   app.use(express.errorHandler());
-  
-  app.use(lessMiddleware({
-         src: __dirname + '/public',
-         force: false,
-         once: true,
-         debug: false,
-         compress: true
-     }));
 });
 
 app.get('/:hash?'           , routes.index);
@@ -66,6 +48,6 @@ app.post('/leave/:hash'     , routes.leaveMeeting);
 require('./model/realtime-engine')(io);
 
 app.locals.env = app.settings.env
-var port = app.settings.env == 'development' ? 3333 : 80;
+var port = app.settings.env == 'production' ? 80 : 3333;
 server.listen(port);
 console.log("Express server listening on port %d in %s mode", port, app.settings.env);
