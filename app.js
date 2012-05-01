@@ -5,7 +5,6 @@ var express = require('express')
   , server = http.createServer(app)
   , io = require('socket.io').listen(server)
   , lessMiddleware = require('less-middleware')(conf.lessMiddleware)
-  , assetManagerMiddleware = require('connect-assetmanager')(conf.assetManager)
   , expressLayouts = require('express-ejs-layouts')
   , routes = require('./routes')
 
