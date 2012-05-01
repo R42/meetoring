@@ -1,10 +1,12 @@
 {
   "name": "meetoring",
   "subdomain": "meetoring",
-  "scripts": {
-    "start": "app.js"
-  },
-  "version": "0.1.2",
+  "domains": [
+    "meetoring.com",
+    "www.meetoring.com",
+    "meetor.in"
+  ],
+  "version": "0.1.1",
   "engines": {
     "node": "0.6.x"
   },
