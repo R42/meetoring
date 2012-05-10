@@ -17,8 +17,10 @@ app.configure(function(){
 
   app.use(express.bodyParser());
   app.use(express.methodOverride());
+
+  app.use(express.compress())
   app.use(lessMiddleware);
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static('public'));
   app.use(express.cookieParser());
   app.use(expressLayouts);
   app.use(app.router);
@@ -44,10 +46,10 @@ app.post('/'                , routes.createMeeting);
 app.post('/join/:hash'      , routes.joinMeeting);
 app.post('/leave/:hash'     , routes.leaveMeeting);
 
-
 require('./model/realtime-engine')(io);
 
 app.locals.env = app.settings.env
 var port = app.settings.env == 'production' ? 80 : 3333;
 server.listen(port);
+
 console.log("Express server listening on port %d in %s mode", port, app.settings.env);
