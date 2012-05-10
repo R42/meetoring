@@ -49,7 +49,7 @@ app.post('/leave/:hash'     , routes.leaveMeeting);
 require('./model/realtime-engine')(io);
 
 app.locals.env = app.settings.env
-var port = app.settings.env == 'production' ? 80 : 3333;
+var port = 3333;
 server.listen(port);
 
 console.log("Express server listening on port %d in %s mode", port, app.settings.env);
