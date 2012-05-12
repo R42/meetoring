@@ -1,83 +1,76 @@
 <div id="main-content">
   <h3>Meeting <strong><%= meeting.name %></strong></h3>
+  <div class="attendeesCount"></div>
   <div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></span></div>
 
-  <div id="form-join" class="form-inline">
-    <h5 id="join-this-meeting-question">Join this meeting?</h5>
-  	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="attendee-rate" title="What is the cost of an hour of your time?"></span>
-    <span><a id="attendee-join" class="btn btn-inverse">Join</a></span>
-  </div>
-  <div>
+  <div class="action-area">
+    <div id="form-join" class="form-inline hidden">
+      <h5 id="join-this-meeting-question">Join this meeting?</h5>
+    	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="rate" title="What is the cost of an hour of your time?"></span>
+      <span><a id="join" class="btn btn-inverse">Join</a></span>
+    </div>
+    <div>
 
-  <div id="form-leave" class="form-inline hidden">
-  	<span><a id="attendee-leave" class="btn btn-inverse">Leave</a></span>
-  </div>
+    <div id="form-leave" class="form-inline hidden">
+    	<span><a id="leave" class="btn btn-inverse">Leave</a></span>
+    </div>
+  <div>
 </div>
  
 <script src="/js/counter.js"></script>
 
 <script>
 
+var meeting = <%- JSON.stringify(meeting) %>;
+var counter = new Meetoring.Counter('#meetingTotalValue', 200, meeting);
+function sync(newMeeting) { 
+  counter.sync(meeting = newMeeting); 
+  attendees = meeting.attendeesCount;
+  
+  var msg = attendees == 0 ? '' : 
+      attendees == 1 ? '1 attendee' : 
+      attendees + ' attendees';
+  $('.attendeesCount').text(msg);
+}
 
 $(function() {
 
-  $("#attendee-rate").keyup(function(event){
+  $("#rate").keyup(function(event){
       if(event.keyCode == 13){
-          $("#attendee-join").click();
+          $("#join").click();
       }
   });
 
- $('#attendee-rate').tooltip();
+  $('#rate').tooltip();
 
- var socketio = io.connect('/meeting');
- socketio.on('connect', function(){
-   var  meeting   = <%- JSON.stringify(meeting) %>
-      , counter   = new Meetoring.Counter('#meetingTotalValue', 200, 10000)
-      , clientId  = socketio.socket.sessionid;
-   
-    counter.init(meeting);
-    counter.start();
+  var socket = io.connect('http://'+document.domain+'/'+meeting.id);
+  socket.on('update', sync);
+  socket.on('connect', function(){
 
-   var onError = function(error) {
-     console.log("ERROR ... ERROR ...");
-   };
+    $("#form-join").hide().removeClass('hidden').fadeIn();
+    $("#form-leave").hide().removeClass('hidden');
+    
+    $('#join').click(function(){ 
+      var rate =  $("#rate").attr('value');
+      $("#form-join").fadeOut();
 
-   $('#attendee-join').click(function(event){ 
-    var rate =  $("#attendee-rate").attr('value');
-    Meetoring.joinMeeting(meeting.id, rate, clientId, function(error, data) {
-     if (error) onError(error);
-
-     meeting = data;
-     $("#form-join").hide();
-     $("#form-leave").removeClass('hidden').show();
-     counter.restart(meeting);     
+      socket.emit('join', rate, function(meeting) {
+        sync(meeting);
+        $("#form-leave").fadeIn();
+      });
     });
-   });
 
-   $('#attendee-leave').click(function(event){ 
-    Meetoring.leaveMeeting(function(error, data) {
-     if (error) onError(error);
-
-     meeting = data;
-     $("#form-leave").hide();
-     $("#form-join").show();
-     counter.restart(meeting);  
+    $('#leave').click(function(){ 
+      $("#form-leave").fadeOut();
+      
+      socket.emit('leave', function(meeting) {
+        sync(meeting);
+        $("#form-join").fadeIn();
+      });
     });
-   });
-   
-   $(document).bind("socket:sync", function(event){
-     socketio.emit("meeting:resync", {meeting: {id: meeting.id}});
-   });
-   
-   socketio.emit("meeting:attendee:spectator:entered", { meeting: {id: meeting.id ,clientId: socketio.socket.sessionid } });
-   
-   socketio.on('sync:rate', function (meeting) {
-       counter.restart(meeting);  
-   });
-   
- });
-
-	
+    
+    setInterval(function(){ socket.emit('sync', sync)}, 1000 * 10);
+  });
 });
 
 </script>

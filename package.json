@@ -21,7 +21,8 @@
     "express-ejs-layouts": "0.1.x",
     "lodash": "0.1.x",
     "console-trace": "0.1.x",
-    "less-middleware": "0.1.x"
+    "less-middleware": "0.1.x",
+    "identifier": "*"
   },
   "devDependencies": {
     "mocha": "*",

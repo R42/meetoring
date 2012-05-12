@@ -1,80 +1,38 @@
 (function(global){
   
-  var STATE ={ 
-    RUNNING: "running",
-    STOPPED: "stopped"
-  };
-  
-  var $ = window.$;
-    
-  var Class = function (container, period, syncTime){
-    this.total = 0;
-    this.rate = 0;
-    this.period = period || 1000;
-    this.delay =  period + 30;
-    this.interval;
-    this.state = STATE.STOPPED;
+  function ticker(self) {
+    self.total += self.rate * self.delay / 1000;
+    self.render();
+  }
+
+  var Class = function (container, delay, duck){
     this.container = container;
-    this.syncTime = syncTime || 15000 ;
-    this.syncronizer = null; 
+    this.delay =   delay;
+    this.total = this.rate = 0;
+    this.interval = null;
+    this.sync(duck);
   };
-  
+
   Class.prototype = {
-    
-    init: function(meeting){
-      this.total = parseFloat(meeting.total);
-      this.rate = parseFloat(meeting.rate);
-    },
-  
-    start: function(){
-      if( this.state === STATE.RUNNING )
-        return;
-        
-      this.state = STATE.RUNNING;
+    sync: function(duck){
+      this.total = parseFloat(duck.total);
+      this.rate = parseFloat(duck.rate);
+      var self = this;
 
-      var self = this;        
-      var ticker = function() {
-        self.increment();
-        self.render();
-      };
-      
-      function syncronizer(){
-        self.sync();
+      if (this.rate != 0 && this.interval == null) {
+        this.interval = setInterval(function() { ticker(self); }, this.delay + 30);
+      } else if (this.rate == 0 && this.interval != null) {
+        clearInterval(this.interval);
+        this.interval = null;
       }
+    },
     
-      this.interval     = setInterval(ticker, this.delay);
-      this.syncronizer  = setInterval(syncronizer ,this.syncTime);
-    },
-
-    increment: function(){
-      this.total += this.rate * this.period / 1000;
-    },
-
-    stop: function(){
-      if(this.state === STATE.STOPPED)
-        return;
-        
-      this.state = STATE.STOPPED;
-      clearInterval(this.interval);
-      clearInterval(this.syncronizer);
-    },
-  
-    restart: function(meeting){
-      this.stop();
-      this.init(meeting);
-      this.start();
-    },
-  
-    render: function(){
+    render: function() {
       $(this.container).text(this.total.toFixed(2));
-    },
-    
-    sync: function(){
-      $(document).trigger("socket:sync");
     }
-    
   };
 
-  window.Meetoring.Counter = Class;
-  
+  global.Meetoring = global.Meetoring || {};
+  Meetoring.Counter = Class;
+
 })(window);
