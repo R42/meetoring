@@ -1,6 +1,7 @@
 module.exports = exports = function(env) {
 
   var inDev = env == 'development', notInDev = !inDev;
+  var inProd = env == 'production', notInProd = !inProd;
 
   var conf = {};
   conf.lessMiddleware = {
@@ -10,6 +11,8 @@ module.exports = exports = function(env) {
        debug: false,
        compress: notInDev
    };
+   
+   conf.shorterDomain = inProd ? 'meetor.in' : '';
 
   return conf;
 };

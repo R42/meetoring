@@ -96,7 +96,7 @@ app.post('/', function(req, res, next){
     });
   });
   
-  res.redirect('/' + meeting.id);
+  res.redirect(util.format('%s/%s', conf.shorterDomain, meeting.id));
 });
 
 app.locals.env = app.settings.env
