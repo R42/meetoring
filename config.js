@@ -12,7 +12,7 @@ module.exports = exports = function(env) {
        compress: notInDev
    };
    
-   conf.shorterDomain = inProd ? 'meetor.in' : '';
+   conf.shorterDomain = inProd ? 'http://meetor.in' : '';
 
   return conf;
 };
