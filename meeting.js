@@ -55,6 +55,7 @@ Meeting.prototype = {
     return {
       rate: this.getRate().toFixed(2),
       total: this.getTotal().toFixed(2),
+      timestamp: +new Date(),
       id: this.id,
       name: this.name,
       attendeesCount: this.attendees.length
