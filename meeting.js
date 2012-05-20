@@ -50,6 +50,9 @@ Meeting.prototype = {
   
   getRate: function() { return this.rate; },
   getTotal: function() { this.updateTotal(); return this.total; },
+  getAttendees: function() {
+    return _.map(this.attendees, function (attendee) { return attendee.id });
+  },
   
   clientModel: function() {
     return {
@@ -58,7 +61,7 @@ Meeting.prototype = {
       timestamp: +new Date(),
       id: this.id,
       name: this.name,
-      attendeesCount: this.attendees.length
+      attendees: this.getAttendees()
     };
   }
 };

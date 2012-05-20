@@ -12,25 +12,26 @@ function setupRealtime(app, meeting) {
     }
 
     rt.on('connection', function(socket) {
-    
-      var id = identifier(40);
+      
+      var clientId = socket.id;
+
+      socket.on('identify', function(id, fn) {
+        clientId = id;
+        fn(meeting.clientModel());
+      });
 
       socket.on('sync', function(fn) {
         fn(meeting.clientModel());
       });
 
       socket.on('join', function(rate, fn) {
-        meeting.addAttendee(id, rate);
+        meeting.addAttendee(clientId, rate);
         acknowledgeAndUpdate(fn);
       });
 
       socket.on('leave', function(fn) {
-        meeting.removeAttendee(id);
+        meeting.removeAttendee(clientId);
         acknowledgeAndUpdate(fn);
-      });
-    
-      socket.on('disconnect', function(socket) {
-        meeting.removeAttendee(id);
       });
     });
 }

@@ -26,6 +26,15 @@ app.configure(function(){
   app.use(lessMiddleware);
   app.use(express.static('public'));
   app.use(express.cookieParser());
+  app.use(function(req, res, next) {
+    if (!req.cookies.id) {
+      var id = require('identifier')(20);
+      res.cookie('id', id, { maxAge: 1000 * 60 * 60 * 24 * 365 * 10 })
+      req.cookies.id = id;
+    }
+      
+    next();
+  });
   app.use(expressLayouts);
   app.use(app.router);
 

@@ -20,7 +20,7 @@ function setupHandlers(app) {
       return;
     }
 
-    res.render('meeting', { meeting: meetings[id].clientModel() })
+    res.render('meeting', { meeting: meetings[id].clientModel(), clientId: req.cookies.id })
   });
 
   app.post('/', function(req, res, next){
