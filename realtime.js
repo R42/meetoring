@@ -31,7 +31,6 @@ function setupRealtime(app, meeting) {
     
       socket.on('disconnect', function(socket) {
         meeting.removeAttendee(id);
-        acknowledgeAndUpdate(fn);
       });
     });
 }
