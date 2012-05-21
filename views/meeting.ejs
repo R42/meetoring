@@ -1,22 +1,23 @@
 <div id="main-content">
   <h3>Meeting <strong><%= meeting.name %></strong></h3>
   <div class="attendeesCount"></div>
-  <div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></span></div>
+  <div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></div>
 
   <div class="action-area">
     <div id="form-join" class="form-inline hidden">
       <h5 id="join-this-meeting-question">Join this meeting?</h5>
-      <span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="rate" title="What is the cost of an hour of your time?"></span>
+      <span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="rate" title="What is the cost of an hour of your time?" /></span>
       <span><a id="join" class="btn btn-inverse">Join</a></span>
     </div>
     
-  <div id="form-leave" class="form-inline hidden">
-    <span><a id="leave" class="btn btn-inverse">Leave</a></span>
-  </div>
+    <div id="form-leave" class="form-inline hidden">
+      <span><a id="leave" class="btn btn-inverse">Leave</a></span>
+    </div>
 
-  <div id="form-share" class="form-inline hidden">
-    <h5 id="join-this-meeting-question">Invite others to join the monitoring</h5>
-    <span><input type="text" readonly="readonly" id="share-url"></span>
+    <div id="form-share" class="form-inline hidden">
+      <h5 id="join-this-meeting-question">Invite others to join the monitoring</h5>
+      <span><input type="text" readonly="readonly" id="share-url" /></span>
+    </div>
   </div>
 </div>
  
@@ -94,3 +95,10 @@ $(function() {
 });
 
 </script>
+
+<div>
+  <h4>How does this work?</h4>
+  <p>Its simple! You start by introducing your cost per hour and joining the meeting and the meeter shows how much money you are spending since the start of the meeting.</p>
+  <p>You can and should invite other meeting attendees by sharing the URL with them so they can also join with their cost per hour.</p>
+  <p>Meetoring shows a real-time updated meeter for the total cost of the meeting taking into account the time each attendee joins and leaves.</p>
+</div>
