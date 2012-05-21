@@ -6,15 +6,18 @@
   <div class="action-area">
     <div id="form-join" class="form-inline hidden">
       <h5 id="join-this-meeting-question">Join this meeting?</h5>
-    	<span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="rate" title="What is the cost of an hour of your time?"></span>
+      <span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="rate" title="What is the cost of an hour of your time?"></span>
       <span><a id="join" class="btn btn-inverse">Join</a></span>
     </div>
-    <div>
+    
+  <div id="form-leave" class="form-inline hidden">
+    <span><a id="leave" class="btn btn-inverse">Leave</a></span>
+  </div>
 
-    <div id="form-leave" class="form-inline hidden">
-    	<span><a id="leave" class="btn btn-inverse">Leave</a></span>
-    </div>
-  <div>
+  <div id="form-share" class="form-inline hidden">
+    <h5 id="join-this-meeting-question">Invite others to join the monitoring</h5>
+    <span><input type="text" readonly="readonly" id="share-url"></span>
+  </div>
 </div>
  
 <script src="/js/counter.js"></script>
@@ -45,6 +48,8 @@ function sync(newMeeting) {
 }
 
 $(function() {
+
+  $('#form-share').hide().removeClass('hidden').fadeIn().find('input').val(document.location);
 
   $("#rate").keyup(function(event){
       if(event.keyCode == 13){
