@@ -7,7 +7,7 @@
     <div id="form-join" class="form-inline hidden">
       <h5 id="join-this-meeting-question">Join this meeting?</h5>
       <span><input type="text" autocomplete="off" placeholder="Price per Hour..." id="rate" title="What is the cost of an hour of your time?" /></span>
-      <span><a id="join" class="btn btn-inverse">Join</a></span>
+      <span><a id="join" class="btn btn-inverse" disabled="disabled">Join</a></span>
     </div>
     
     <div id="form-leave" class="form-inline hidden">
@@ -53,9 +53,26 @@ $(function() {
   $('#form-share').hide().removeClass('hidden').fadeIn().find('input').val(document.location);
 
   $("#rate").keyup(function(event){
-      if(event.keyCode == 13){
-          $("#join").click();
-      }
+    
+    var value = $("#rate").val();
+    var floatRegex = /^([0-9]*[\.,][0-9]+|[0-9]+)$/;
+    
+    if (!floatRegex.test(value)) {
+      $('#join').attr('disabled', 'disabled');
+      return;
+    }
+  
+    $('#join').removeAttr('disabled');
+
+    if(event.keyCode == 13){
+        $("#join").click();
+    }
+  }).keypress(function(event) {
+    var key = event.charCode;
+    return (key == 8
+      || key == 44
+      || key == 46
+      || (key >= 48 && key <= 57));
   });
 
   $('#rate').tooltip();
@@ -71,7 +88,7 @@ $(function() {
       sync(meeting);
       
       $('#join').click(function(){ 
-        var rate =  $("#rate").attr('value');
+        var rate =  $("#rate").val();
         $("#form-join").fadeOut();
 
         socket.emit('join', rate, function(meeting) {
