@@ -1,5 +1,17 @@
 (function(global){
   
+  function getTime() {
+    var now = new Date();
+    var utc = new Date(
+      now.getUTCFullYear(), 
+      now.getUTCMonth(), 
+      now.getUTCDate(),  
+      now.getUTCHours(), 
+      now.getUTCMinutes(), 
+      now.getUTCSeconds());
+    return utc;
+  }
+  
   function ticker(self) {
     self.total += self.rate * self.delay / 1000;
     self.render();
@@ -8,7 +20,7 @@
   var Class = function (container, delay, duck){
     this.container = container;
     this.delay =   delay;
-    this.total = this.rate = 0;
+    this.rate = 0;
     this.interval = null;
     this.sync(duck);
   };
@@ -17,7 +29,7 @@
     sync: function(duck){
       this.totalAtTimestamp = parseFloat(duck.total);
       this.rate = parseFloat(duck.rate);
-      this.timestamp = parseInt(duck.timestamp);
+      this.timestamp = getTime();
       
       var self = this;
       function ticker() {
@@ -33,7 +45,7 @@
     },
     
     refresh: function() {
-      var now = new Date();
+      var now = getTime();
       var timespanMillis = now - this.timestamp;
 
       var total = this.totalAtTimestamp + this.rate * ( timespanMillis / 1000 );

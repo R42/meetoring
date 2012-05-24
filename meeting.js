@@ -1,6 +1,18 @@
 var identifier = require('identifier');
 var _  = require('lodash');
 
+function getTime() {
+  var now = new Date();
+  var utc = new Date(
+    now.getUTCFullYear(), 
+    now.getUTCMonth(), 
+    now.getUTCDate(),  
+    now.getUTCHours(), 
+    now.getUTCMinutes(), 
+    now.getUTCSeconds());
+  return utc;
+}
+
 function Meeting (name){
   this.id = identifier(3);
   this.name = name;
@@ -36,7 +48,7 @@ Meeting.prototype = {
   },
   
   updateTotal: function() {
-    var newTimestamp = new Date();
+    var newTimestamp = getTime();
     var timespanMillis = newTimestamp - this.timeStamp;
     this.timeStamp = newTimestamp
     
@@ -58,7 +70,7 @@ Meeting.prototype = {
     return {
       rate: this.getRate().toFixed(2),
       total: this.getTotal().toFixed(2),
-      timestamp: +new Date(),
+      timestamp: +getTime(),
       id: this.id,
       name: this.name,
       attendees: this.getAttendees()
