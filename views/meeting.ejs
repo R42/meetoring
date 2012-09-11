@@ -1,7 +1,7 @@
 <div id="main-content">
   <h3>Meeting <strong><%= meeting.name %></strong></h3>
   <div class="attendeesCount"></div>
-  <div id="total">€<span id="meetingTotalValue"><%= meeting.total %></span></div>
+  <div id="total">€<span id="meetingTotalValue"><%= meeting.total.toFixed(2) %></span></div>
 
   <div class="action-area">
     <div id="form-join" class="form-inline hidden">

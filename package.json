@@ -6,7 +6,7 @@
     "www.meetoring.com",
     "meetor.in"
   ],
-  "version": "0.1.4",
+  "version": "0.1.5",
   "engines": {
     "node": "0.6.x"
   },
@@ -21,7 +21,6 @@
     "express-ejs-layouts": "0.1.x",
     "lodash": "0.1.x",
     "console-trace": "0.1.x",
-    "less-middleware": "0.1.x",
     "identifier": "*"
   },
   "devDependencies": {
